@@ -2,23 +2,26 @@
 #include"Object.h"
 #include<list>
 #include <functional>
+#include<unordered_map>
 
-namespace
+namespace data
 {
-	std::list<std::function<void(void)>>hitFunction;
+
+	std::unordered_map<const char*,std::function<void(void)>>hitFunction;
 }
 
 void Physic::Update()
 {
+	
 }
 
-void Physic::Entry(std::shared_ptr<SphereCollision> collion, void(*fp)() )
+void Physic::Entry(std::shared_ptr<SphereCollision> collion, std::function<void(void) >fp,const char* NameTag)
 {
-	hitFunction.push_back(fp);
+	data::hitFunction[NameTag] = fp;
 }
 
 
-void Physic::Exit()
+void Physic::Exit(std::function<void(void) >fp, const char* NameTag)
 {
 
 }

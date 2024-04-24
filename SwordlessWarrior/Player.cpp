@@ -6,11 +6,12 @@
 
 Player::Player()
 {
-	Physic::Entry(m_SphereCol, Hit);
+	Physic::Entry(m_SphereCol, Hit(),NameTag::Player);
 }
 
 Player::~Player()
 {
+	Physic::Exit()
 }
 
 void Player::Update()
@@ -19,5 +20,10 @@ void Player::Update()
 
 void Player::Draw()
 {
+}
+
+std::function<void(void)> Player::Hit()
+{
+	return std::function<void(void)>();
 }
 

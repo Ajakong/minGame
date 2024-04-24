@@ -8,7 +8,3 @@ Object::~Object()
 {
 }
 
-void Object::Hit()
-{
-	HitFlag = true;
-}

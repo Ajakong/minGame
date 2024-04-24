@@ -2,6 +2,7 @@
 #include"Object.h"
 
 
+
 class Player : public Object
 {
 public:
@@ -11,6 +12,7 @@ public:
 	void Update();
 	void Draw();
 
+	std::function<void(void) > Hit();
 private:
 	
 };
