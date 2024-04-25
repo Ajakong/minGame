@@ -11,10 +11,10 @@ class TitleScene : public Scene
 public:
     TitleScene(SceneManager& manager);
     ~TitleScene();
-    virtual void Update();
-    virtual void Draw();
+    virtual std::function<void() > Update();
+    virtual std::function<void() > Draw();
 
-    void getSlectNumber(int a) { m_selectNum = a; }
+    std::function<void() > getSlectNumber(int a) { m_selectNum = a; }
 
 private:
 
@@ -46,24 +46,24 @@ private:
     float m_animTime_move = 0.0f;
 
     // メンバ関数ポインタの宣言
-    using UpdateFunc_t = void (TitleScene::*)();
-    using DrawFunc_t = void (TitleScene::*)();
+    using UpdateFunc_t = std::function< void() >(TitleScene::*)();
+    using DrawFunc_t = std::function< void() >(TitleScene::*)();
     UpdateFunc_t m_updateFunc = nullptr;
     DrawFunc_t m_drawFunc = nullptr;
 
 
 
     // 更新関数
-    void FadeInUpdate();
-    void NormalUpdate();
-    void FadeOutUpdate();
+    std::function<void() >FadeInUpdate();
+    std::function<void() > NormalUpdate();
+    std::function<void() > FadeOutUpdate();
 
-    void ChangeScene(std::shared_ptr<Scene> next);
+    std::function<void() > ChangeScene(std::shared_ptr<Scene> next);
 
 
     // 描画関数
-    void FadeDraw();
-    void NormalDraw();
+    std::function<void() > FadeDraw();
+    std::function<void() > NormalDraw();
 
 };
 

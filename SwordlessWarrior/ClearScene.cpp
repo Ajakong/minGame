@@ -24,19 +24,19 @@ ClearScene::~ClearScene()
 
 }
 
-void ClearScene::Update()
+std::function<void() > ClearScene::Update()
 {
 	(this->*m_updateFunc)();
 
 	Pad::Update();
 }
 
-void ClearScene::Draw()
+std::function<void() > ClearScene::Draw()
 {
 	(this->*m_drawFunc)();
 }
 
-void ClearScene::FadeInUpdate()
+std::function<void() > ClearScene::FadeInUpdate()
 {
 	m_frame--;
 	if (m_frame <= 0)
@@ -46,7 +46,7 @@ void ClearScene::FadeInUpdate()
 	}
 }
 
-void ClearScene::NormalUpdate()
+std::function<void() > ClearScene::NormalUpdate()
 {
 	m_btnFrame++;
 	if (Pad::IsTrigger(PAD_INPUT_1))
@@ -56,7 +56,7 @@ void ClearScene::NormalUpdate()
 	}
 }
 
-void ClearScene::FadeOutUpdate()
+std::function<void() > ClearScene::FadeOutUpdate()
 {
 	m_frame++;
 	if (60 <= m_frame)
@@ -65,7 +65,7 @@ void ClearScene::FadeOutUpdate()
 	}
 }
 
-void ClearScene::FadeDraw()
+std::function<void() > ClearScene::FadeDraw()
 {
 	DrawRotaString(Game::kScreenWidth / 2, Game::kScreenHeight / 2, 5, 5, 0, 0, 0, 0xffffff, 0, 0, "Clear");
 	DrawRotaString(Game::kScreenWidth / 2, Game::kScreenHeight / 2 + 200, 5, 5, 0, 0, 0, 0xffffff, 0, 0, "タイトルへ");
@@ -75,7 +75,7 @@ void ClearScene::FadeDraw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
-void ClearScene::NormalDraw()
+std::function<void() > ClearScene::NormalDraw()
 {
 	DrawRotaString(Game::kScreenWidth / 2, Game::kScreenHeight / 2, 5, 5, 0, 0, 0, 0xffffff, 0, 0, "Clear");
 	DrawRotaString(Game::kScreenWidth / 2, Game::kScreenHeight / 2 + 200, 5, 5, 0, 0, 0, 0xffffff, 0, 0, "タイトルへ");

@@ -45,15 +45,17 @@ TitleScene::~TitleScene()
 	DeleteGraph(m_titleHandle);
 }
 
-void TitleScene::Update()
+std::function<void() > TitleScene::Update()
 {
 
 	(this->*m_updateFunc)();
 
 	Pad::Update();
+
+	return std::function<void()>();
 }
 
-void TitleScene::Draw()
+std::function<void() > TitleScene::Draw()
 {
 
 	(this->*m_drawFunc)();
@@ -62,9 +64,11 @@ void TitleScene::Draw()
 	{
 		ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
 	}
+
+	return std::function<void()>();
 }
 
-void TitleScene::FadeInUpdate()
+std::function<void() > TitleScene::FadeInUpdate()
 {
 	m_fps = GetFPS();
 
@@ -74,9 +78,11 @@ void TitleScene::FadeInUpdate()
 		m_updateFunc = &TitleScene::NormalUpdate;
 		m_drawFunc = &TitleScene::NormalDraw;
 	}
+
+	return std::function<void()>();
 }
 
-void TitleScene::NormalUpdate()
+std::function<void() > TitleScene::NormalUpdate()
 {
 	m_fps = GetFPS();
 
@@ -110,9 +116,11 @@ void TitleScene::NormalUpdate()
 	}
 
 	m_btnFrame++;
+
+	return std::function<void()>();
 }
 
-void TitleScene::FadeOutUpdate()
+std::function<void() > TitleScene::FadeOutUpdate()
 {
 
 	m_fps = GetFPS();
@@ -120,16 +128,18 @@ void TitleScene::FadeOutUpdate()
 	if (m_frame >= 60) {
 		m_isGamePlaying = true;
 	}
+
+	return std::function<void()>();
 }
 
-void TitleScene::ChangeScene(std::shared_ptr<Scene> next)
+std::function<void() > TitleScene::ChangeScene(std::shared_ptr<Scene> next)
 {
 	StopSoundMem(m_stageBgm);
 	m_manager.ChangeScene(next);
 
 }
 
-void TitleScene::FadeDraw()
+std::function<void() > TitleScene::FadeDraw()
 {
 	int alpha = static_cast<int>(255 * (static_cast<float>(m_frame) / kFadeFrameMax));
 	SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
@@ -137,7 +147,7 @@ void TitleScene::FadeDraw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
-void TitleScene::NormalDraw()
+std::function<void(void) > TitleScene::NormalDraw()
 {
 	DrawFormatString(0, 0, 0xffffff, "TitleScene");
 
@@ -151,4 +161,6 @@ void TitleScene::NormalDraw()
 
 	//DrawString(10, 100, "TitleScene", 0xffffff);
 	DrawFormatString(730, 650, 0xffffff, "Push Z to Start");
+
+	return std::function<void()>();
 }

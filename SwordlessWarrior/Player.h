@@ -12,7 +12,7 @@ public:
 	void Update();
 	void Draw();
 
-	std::function<void(void) > Hit();
+	void Hit();
 private:
 	
 };

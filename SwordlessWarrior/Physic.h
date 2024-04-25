@@ -11,10 +11,10 @@ namespace Physic
 {
 	void Update();
 
-	void Entry(std::shared_ptr<SphereCollision> collision, std::function<void(void) > hitFunction, const char* ObjectName);
+	void Entry(std::shared_ptr<SphereCollision> collision, std::function<void()>, const char* ObjectName);
 
 
-	void Exit(std::function<void(void) >fp, const char* NameTag);
+	void Exit( const char* NameTag);
 
 
 };

@@ -7,8 +7,8 @@ public:
     ClearScene(SceneManager& mgr);
     ~ClearScene();
 
-    virtual void Update();
-    virtual void Draw();
+    virtual std::function<void() > Update();
+    virtual std::function<void() > Draw();
 
 private:
 
@@ -16,19 +16,19 @@ private:
     int m_frame;
 
     // メンバ関数ポインタの宣言
-    using UpdateFunc_t = void (ClearScene::*)();
-    using DrawFunc_t = void (ClearScene::*)();
+    using UpdateFunc_t = std::function<void() >(ClearScene::*)();
+    using DrawFunc_t = std::function<void() >(ClearScene::*)();
     UpdateFunc_t m_updateFunc;
     DrawFunc_t m_drawFunc;
 
     // 更新状態を表す関数
-    void FadeInUpdate();
-    void NormalUpdate();
-    void FadeOutUpdate();
+    std::function<void() > FadeInUpdate();
+    std::function<void() > NormalUpdate();
+    std::function<void() > FadeOutUpdate();
 
     // 描画状態を表す関数
-    void FadeDraw();
-    void NormalDraw();
+    std::function<void() > FadeDraw();
+    std::function<void() > NormalDraw();
 
 };
 

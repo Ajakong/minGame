@@ -32,7 +32,7 @@ GamePlayingScene::~GamePlayingScene()
 {
 }
 
-void GamePlayingScene::Update()
+std::function<void(void) > GamePlayingScene::Update()
 {
 
 	(this->*m_updateFunc)();
@@ -41,7 +41,7 @@ void GamePlayingScene::Update()
 	Pad::Update();
 }
 
-void GamePlayingScene::Draw()
+std::function<void(void) > GamePlayingScene::Draw()
 {
 
 	(this->*m_drawFunc)();
@@ -65,7 +65,7 @@ void GamePlayingScene::Draw()
 	}
 }
 
-void GamePlayingScene::FadeInUpdate()
+std::function<void(void) > GamePlayingScene::FadeInUpdate()
 {
 	m_fps = GetFPS();
 	m_gameManager->Update();
@@ -77,7 +77,7 @@ void GamePlayingScene::FadeInUpdate()
 	}
 }
 
-void GamePlayingScene::NormalUpdate()
+std::function<void(void) > GamePlayingScene::NormalUpdate()
 {
 	m_fps = GetFPS();
 	m_btnFrame++;
@@ -87,7 +87,7 @@ void GamePlayingScene::NormalUpdate()
 	m_isClear = m_gameManager->GetClear();
 }
 
-void GamePlayingScene::FadeOutUpdate()
+std::function<void(void) > GamePlayingScene::FadeOutUpdate()
 {
 
 	m_fps = GetFPS();
@@ -95,12 +95,12 @@ void GamePlayingScene::FadeOutUpdate()
 	m_gameManager->Update();
 }
 
-void GamePlayingScene::ChangeScene(std::shared_ptr<Scene> nextScene)
+std::function<void(void) > GamePlayingScene::ChangeScene(std::shared_ptr<Scene> nextScene)
 {
 	m_manager.ChangeScene(nextScene);
 }
 
-void GamePlayingScene::FadeDraw()
+std::function<void(void) > GamePlayingScene::FadeDraw()
 {
 	m_gameManager->Draw();
 	DrawString(10, 100, "GamePlayingScene", 0xffffff);
@@ -109,8 +109,7 @@ void GamePlayingScene::FadeDraw()
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
-
-void GamePlayingScene::NormalDraw()
+std::function<void(void) >GamePlayingScene::NormalDraw()
 {
 	m_gameManager->Draw();
 	DrawString(10, 100, "GamePlayingScene", 0xffffff);

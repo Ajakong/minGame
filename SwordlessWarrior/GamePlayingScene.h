@@ -44,8 +44,8 @@ private:
     std::shared_ptr<GameManager> m_gameManager;
 
     // メンバ関数ポインタの宣言
-    using UpdateFunc_t = void (GamePlayingScene::*)();
-    using DrawFunc_t = void (GamePlayingScene::*)();
+    using UpdateFunc_t = std::function<void(void) >(GamePlayingScene::*)();
+    using DrawFunc_t = std::function<void(void) >(GamePlayingScene::*)();
     UpdateFunc_t m_updateFunc = nullptr;
     DrawFunc_t m_drawFunc = nullptr;
 

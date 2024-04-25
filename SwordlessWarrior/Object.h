@@ -18,7 +18,7 @@ public:
 
 	virtual void Update()=0;
 	virtual void Draw() = 0;
-	virtual std::function<void(void) > Hit()=0;
+	virtual void Hit()=0;
 
 protected:
 	VECTOR m_pos;

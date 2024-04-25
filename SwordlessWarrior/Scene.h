@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#include <functional>
+
 class SceneManager;
 /// <summary>
 /// シーン基底クラス
