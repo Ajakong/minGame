@@ -7,6 +7,7 @@
 namespace NameTag
 {
 	const char* Player = "Player";
+	const char* Enemy = "Enemy";
 }
 
 class Object
