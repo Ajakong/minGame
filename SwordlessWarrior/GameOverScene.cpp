@@ -25,19 +25,19 @@ GameOverScene::~GameOverScene()
 {
 }
 
-std::function<void() > GameOverScene::Update()
+void GameOverScene::Update()
 {
 	(this->*m_updateFunc)();
 
 	Pad::Update();
 }
 
-std::function<void() > GameOverScene::Draw()
+void GameOverScene::Draw()
 {
 	(this->*m_drawFunc)();
 }
 
-std::function<void() > GameOverScene::FadeInUpdate()
+void GameOverScene::FadeInUpdate()
 {
 	m_frame--;
 
@@ -48,7 +48,7 @@ std::function<void() > GameOverScene::FadeInUpdate()
 	}
 }
 
-std::function<void() > GameOverScene::NormalUpdate()
+void GameOverScene::NormalUpdate()
 {
 	m_btnFrame++;
 	if (Pad::IsTrigger(PAD_INPUT_1))
@@ -67,7 +67,7 @@ std::function<void() > GameOverScene::NormalUpdate()
 
 }
 
-std::function<void() > GameOverScene::FadeOutUpdate()
+void GameOverScene::FadeOutUpdate()
 {
 	m_frame++;
 	m_fadeSoundFrame -= 3;
@@ -93,7 +93,7 @@ std::function<void() > GameOverScene::FadeOutUpdate()
 	}
 }
 
-std::function<void() > GameOverScene::FadeDraw()
+void GameOverScene::FadeDraw()
 {
 	int alpha = static_cast<int>(255 * (static_cast<float>(m_frame) / 60.0f));
 
@@ -117,7 +117,7 @@ std::function<void() > GameOverScene::FadeDraw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
-std::function<void() > GameOverScene::NormalDraw()
+void GameOverScene::NormalDraw()
 {
 	DrawString(1000, 500, "Continue", 0xffffff);
 	DrawString(1000, 600, "To Title", 0xffffff);

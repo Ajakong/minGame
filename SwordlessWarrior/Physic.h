@@ -1,5 +1,6 @@
 #pragma once
 #include"SphereCollision.h"
+#include"Object.h"
 #include<iostream>
 #include<list>
 #include <functional>
@@ -11,7 +12,7 @@ namespace Physic
 {
 	void Update();
 
-	void Entry(std::shared_ptr<SphereCollision> collision, std::function<void()>, const char* ObjectName);
+	void Entry(std::shared_ptr<SphereCollision> collion, std::shared_ptr<Object> obj, const char* NameTag);
 
 
 	void Exit( const char* NameTag);

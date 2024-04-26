@@ -9,8 +9,8 @@ public:
     GameOverScene(SceneManager& mgr);
 
     ~GameOverScene();
-    virtual std::function<void() > Update();
-    virtual std::function<void() > Draw();
+    virtual void Update();
+    virtual void Draw();
 
 private:
 
@@ -26,18 +26,18 @@ private:
 
 
     // メンバ関数ポインタの宣言
-    using UpdateFunc_t = std::function< void() >(GameOverScene::*)();
-    using DrawFunc_t = std::function< void() >(GameOverScene::*)();
+    using UpdateFunc_t = void(GameOverScene::*)();
+    using DrawFunc_t = void(GameOverScene::*)();
     UpdateFunc_t m_updateFunc;
     DrawFunc_t m_drawFunc;
 
     // 更新状態を表す関数
-    std::function<void() > FadeInUpdate();
-    std::function<void() > NormalUpdate();
-    std::function<void() > FadeOutUpdate();
+    void FadeInUpdate();
+    void NormalUpdate();
+    void FadeOutUpdate();
 
     // 描画状態を表す関数
-    std::function<void() > FadeDraw();
-    std::function<void() > NormalDraw();
+    void FadeDraw();
+    void NormalDraw();
 };
 

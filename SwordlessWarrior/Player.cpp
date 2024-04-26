@@ -2,17 +2,23 @@
 #include"Physic.h"
 #include<list>
 #include <functional>
+#include"NameTag.h"
 
 
-Player::Player()
+Player::Player(int& modelhandle) :Object(modelhandle)
 {
-	std::function<void()> hitFunc=Hit;
-	Physic::Entry(m_SphereCol,hitFunc ,NameTag::Player);
+	
+	
 }
 
 Player::~Player()
 {
 	Physic::Exit(NameTag::Player);
+}
+
+void Player::Init()
+{
+	Physic::Entry(m_SphereCol, shared_from_this(), NameTag::Player);
 }
 
 void Player::Update()

@@ -1,19 +1,14 @@
 #pragma once
-
-#include"SphereCollision.h"
 #include"Dxlib.h"
 #include <functional>
+#include<iostream>
 
-namespace NameTag
-{
-	const char* Player = "Player";
-	const char* Enemy = "Enemy";
-}
+class SphereCollision;
 
-class Object
+class Object : public std::enable_shared_from_this<Object>
 {
 public:
-	Object();
+	Object(int& m_modelhandle);
 	virtual  ~Object();
 
 	virtual void Update()=0;
@@ -21,8 +16,11 @@ public:
 	virtual void Hit()=0;
 
 protected:
+	int m_modelHandle = 0;
 	VECTOR m_pos;
 	std::shared_ptr<SphereCollision> m_SphereCol;
+
+
 
 	bool HitFlag = false;
 };

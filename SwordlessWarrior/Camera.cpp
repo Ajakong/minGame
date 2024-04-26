@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include"Pad.h"
 #include <math.h>
+#include"Player.h"
 
 
 namespace
@@ -17,7 +18,7 @@ Camera::Camera()
 	// FOV(‹–ìŠp)‚ğ60“x‚É
 	SetupCamera_Perspective(60.0f * (static_cast<float>(DX_PI_F) / 180.0f));
 
-	pos = VGet(0, 0, 0);
+	pos = VGet(-100, 200, -200);
 }
 
 Camera::~Camera()
@@ -25,25 +26,15 @@ Camera::~Camera()
 	// ˆ—‚È‚µ.
 }
 
-void Camera::Update()
+void Camera::Update(std::shared_ptr<Player> player)
 {
 
-	if (Pad::IsPress(PAD_INPUT_LEFT))
-	{
-		cameraAngle += 0.05f;
-	}
-	if (Pad::IsPress(PAD_INPUT_RIGHT))
-	{
-		cameraAngle -= 0.05f;
-	}
-
-
-	SetCameraNearFar(1.0f, 180.0f);
+	//SetCameraNearFar(1.0f, 180.0f);
 	VECTOR cameraPos;
 	cameraPos.x = cosf(cameraAngle) * kCameraDist;
-	cameraPos.y = kCameraHeight;
+	cameraPos.y = kCameraHeight+velocity.y;
 	cameraPos.z = sinf(cameraAngle) * kCameraDist;
-	SetCameraPositionAndTarget_UpVecY(cameraPos, VGet(0, 0, 0));
+	SetCameraPositionAndTarget_UpVecY(pos,player->GetPos());
 
 	Pad::Update();
 }

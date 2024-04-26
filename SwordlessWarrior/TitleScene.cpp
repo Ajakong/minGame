@@ -1,5 +1,6 @@
 #include <DxLib.h>
 #include <cassert>
+#include"Camera.h"
 #include "Application.h"
 #include "SceneManager.h"
 #include "TitleScene.h"
@@ -19,43 +20,38 @@ namespace
 TitleScene::TitleScene(SceneManager& manager) :
 	Scene(manager),
 	m_titleHandle(LoadGraph("Title/Title.png")),
-	m_model_dance(MV1LoadModel("Title/dance.mv1")),
-	m_stageBgm(LoadSoundMem("Title/Title.mp3"))
+	m_modelHandle(MV1LoadModel("model/knight.mv1")),
+	m_model_sit(MV1LoadModel("model/Sitting.mv1")),
+	m_stageBgm(LoadSoundMem("BGM/title.mp3")),
+	m_camera(std::make_shared<Camera>())
 {
 	PlaySoundMem(m_stageBgm, DX_PLAYTYPE_LOOP);
 	m_updateFunc = &TitleScene::FadeInUpdate;
 	m_drawFunc = &TitleScene::FadeDraw;
-	m_modelHandle[0] = MV1LoadModel("player/Idle.mv1");
-	m_attach_move[0] = MV1AttachAnim(m_modelHandle[0], 0, m_model_dance);
-	for (int i = 1; i < 10; i++)
-	{
-		m_modelHandle[i] = MV1DuplicateModel(m_modelHandle[0]);
-		m_attach_move[i] = MV1AttachAnim(m_modelHandle[i], 0, m_model_dance);
-	}
+	
+	m_attach_move = MV1AttachAnim(m_modelHandle, 0, m_model_sit);
+	m_modelHandle = MV1DuplicateModel(m_modelHandle);
+	m_attach_move = MV1AttachAnim(m_modelHandle, 0, m_model_sit);
 }
 
 TitleScene::~TitleScene()
 {
-	for (int i = 0; i < 10; i++)
-	{
-		MV1DeleteModel(m_modelHandle[i]);
-	}
-	MV1DeleteModel(m_model_dance);
+	MV1DeleteModel(m_modelHandle);
+	MV1DeleteModel(m_model_sit);
 	DeleteSoundMem(m_stageBgm);
 	DeleteGraph(m_titleHandle);
 }
 
-std::function<void() > TitleScene::Update()
+void TitleScene::Update()
 {
 
 	(this->*m_updateFunc)();
 
 	Pad::Update();
 
-	return std::function<void()>();
 }
 
-std::function<void() > TitleScene::Draw()
+void TitleScene::Draw()
 {
 
 	(this->*m_drawFunc)();
@@ -65,11 +61,11 @@ std::function<void() > TitleScene::Draw()
 		ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
 	}
 
-	return std::function<void()>();
 }
 
-std::function<void() > TitleScene::FadeInUpdate()
+void TitleScene::FadeInUpdate()
 {
+
 	m_fps = GetFPS();
 
 	m_frame--;
@@ -79,14 +75,12 @@ std::function<void() > TitleScene::FadeInUpdate()
 		m_drawFunc = &TitleScene::NormalDraw;
 	}
 
-	return std::function<void()>();
 }
 
-std::function<void() > TitleScene::NormalUpdate()
+void TitleScene::NormalUpdate()
 {
 	m_fps = GetFPS();
 
-	VECTOR center[10] = { 0 };
 	//アニメーション
 	if (!m_back)
 	{
@@ -100,14 +94,11 @@ std::function<void() > TitleScene::NormalUpdate()
 	if (m_playAnimTime > 565)m_back = true;
 	if (m_playAnimTime < 0)m_back = false;
 
-	for (int i = 0; i < 10; i++)
-	{
-		center[i] = VGet(330 + i * 100, 300, -260);
-		MV1SetPosition(m_modelHandle[i], center[i]);
+	MV1SetPosition(m_modelHandle, VGet(0,0,0));
 
-		MV1SetAttachAnimTime(m_modelHandle[i], m_attach_move[i], m_playAnimTime);
-		//
-	}
+	MV1SetAttachAnimTime(m_modelHandle, m_attach_move, m_playAnimTime);
+		
+	
 
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
@@ -117,10 +108,9 @@ std::function<void() > TitleScene::NormalUpdate()
 
 	m_btnFrame++;
 
-	return std::function<void()>();
 }
 
-std::function<void() > TitleScene::FadeOutUpdate()
+void TitleScene::FadeOutUpdate()
 {
 
 	m_fps = GetFPS();
@@ -129,17 +119,16 @@ std::function<void() > TitleScene::FadeOutUpdate()
 		m_isGamePlaying = true;
 	}
 
-	return std::function<void()>();
 }
 
-std::function<void() > TitleScene::ChangeScene(std::shared_ptr<Scene> next)
+void TitleScene::ChangeScene(std::shared_ptr<Scene> next)
 {
 	StopSoundMem(m_stageBgm);
 	m_manager.ChangeScene(next);
 
 }
 
-std::function<void() > TitleScene::FadeDraw()
+void TitleScene::FadeDraw()
 {
 	int alpha = static_cast<int>(255 * (static_cast<float>(m_frame) / kFadeFrameMax));
 	SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
@@ -147,20 +136,16 @@ std::function<void() > TitleScene::FadeDraw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
-std::function<void(void) > TitleScene::NormalDraw()
+void TitleScene::NormalDraw()
 {
 	DrawFormatString(0, 0, 0xffffff, "TitleScene");
 
 
 
-	for (int i = 0; i < 10; i++)
-	{
-		MV1DrawModel(m_modelHandle[i]);
-	}
+	MV1DrawModel(m_modelHandle);
+	
 	DrawRotaGraph(800, 450, 1, 0, m_titleHandle, true);
 
 	//DrawString(10, 100, "TitleScene", 0xffffff);
 	DrawFormatString(730, 650, 0xffffff, "Push Z to Start");
-
-	return std::function<void()>();
 }

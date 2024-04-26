@@ -32,7 +32,7 @@ GamePlayingScene::~GamePlayingScene()
 {
 }
 
-std::function<void(void) > GamePlayingScene::Update()
+void GamePlayingScene::Update()
 {
 
 	(this->*m_updateFunc)();
@@ -41,7 +41,7 @@ std::function<void(void) > GamePlayingScene::Update()
 	Pad::Update();
 }
 
-std::function<void(void) > GamePlayingScene::Draw()
+void GamePlayingScene::Draw()
 {
 
 	(this->*m_drawFunc)();
@@ -65,7 +65,7 @@ std::function<void(void) > GamePlayingScene::Draw()
 	}
 }
 
-std::function<void(void) > GamePlayingScene::FadeInUpdate()
+void GamePlayingScene::FadeInUpdate()
 {
 	m_fps = GetFPS();
 	m_gameManager->Update();
@@ -77,17 +77,26 @@ std::function<void(void) > GamePlayingScene::FadeInUpdate()
 	}
 }
 
-std::function<void(void) > GamePlayingScene::NormalUpdate()
+void GamePlayingScene::NormalUpdate()
 {
 	m_fps = GetFPS();
 	m_btnFrame++;
 	m_gameManager->Update();
 
+	for (int x = -50; x <= 50; x += 10)
+	{
+		DrawLine3D(VGet(static_cast<float>(x), 0, -50), VGet(static_cast<float>(x), 0, 50), 0xffff00);
+	}
+	for (int z = -50; z <= 50; z += 10)
+	{
+		DrawLine3D(VGet(-50, 0, static_cast<float>(z)), VGet(50, 0, static_cast<float>(z)), 0xff0000);
+	}
+
 	m_isGameOver = m_gameManager->GetGameOver();
 	m_isClear = m_gameManager->GetClear();
 }
 
-std::function<void(void) > GamePlayingScene::FadeOutUpdate()
+void GamePlayingScene::FadeOutUpdate()
 {
 
 	m_fps = GetFPS();
@@ -95,12 +104,12 @@ std::function<void(void) > GamePlayingScene::FadeOutUpdate()
 	m_gameManager->Update();
 }
 
-std::function<void(void) > GamePlayingScene::ChangeScene(std::shared_ptr<Scene> nextScene)
+void GamePlayingScene::ChangeScene(std::shared_ptr<Scene> nextScene)
 {
 	m_manager.ChangeScene(nextScene);
 }
 
-std::function<void(void) > GamePlayingScene::FadeDraw()
+void GamePlayingScene::FadeDraw()
 {
 	m_gameManager->Draw();
 	DrawString(10, 100, "GamePlayingScene", 0xffffff);
@@ -109,7 +118,7 @@ std::function<void(void) > GamePlayingScene::FadeDraw()
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
-std::function<void(void) >GamePlayingScene::NormalDraw()
+void GamePlayingScene::NormalDraw()
 {
 	m_gameManager->Draw();
 	DrawString(10, 100, "GamePlayingScene", 0xffffff);

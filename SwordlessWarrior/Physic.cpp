@@ -3,11 +3,12 @@
 #include<list>
 #include <functional>
 #include<unordered_map>
+#include"Object.h"
 
 namespace data
 {
 
-	std::unordered_map<const char*,std::function<void(void)>>hitFunction;
+	std::unordered_map < const char*, std::shared_ptr<Object>> object;
 }
 
 void Physic::Update()
@@ -15,9 +16,9 @@ void Physic::Update()
 	
 }
 
-void Physic::Entry(std::shared_ptr<SphereCollision> collion, std::function<void()> fp,const char* NameTag)
+void Physic::Entry(std::shared_ptr<SphereCollision> collion, std::shared_ptr<Object> obj,const char* NameTag)
 {
-	data::hitFunction[NameTag] = fp;
+	data::object[NameTag] = obj;
 }
 
 

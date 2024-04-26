@@ -6,22 +6,24 @@
 
 class SceneMain;
 
+class Camera;
+
 class TitleScene : public Scene
 {
 public:
     TitleScene(SceneManager& manager);
     ~TitleScene();
-    virtual std::function<void() > Update();
-    virtual std::function<void() > Draw();
+    virtual void Update();
+    virtual void Draw();
 
-    std::function<void() > getSlectNumber(int a) { m_selectNum = a; }
+    void getSlectNumber(int a) { m_selectNum = a; }
 
 private:
 
     int m_titleHandle = 0;
-    int m_modelHandle[10] = { 0 };
-    int m_model_dance = 0;
-    int m_attach_move[10] = { 0 };
+    int m_modelHandle = 0;
+    int m_model_sit = 0;
+    int m_attach_move = 0;
 
     int m_btnFrame = 0;
     int m_frame = 0;
@@ -45,25 +47,27 @@ private:
     float m_playAnimTime = 0.0f;
     float m_animTime_move = 0.0f;
 
+    std::shared_ptr<Camera> m_camera;
+
     // メンバ関数ポインタの宣言
-    using UpdateFunc_t = std::function< void() >(TitleScene::*)();
-    using DrawFunc_t = std::function< void() >(TitleScene::*)();
+    using UpdateFunc_t = void(TitleScene::*)();
+    using DrawFunc_t = void(TitleScene::*)();
     UpdateFunc_t m_updateFunc = nullptr;
     DrawFunc_t m_drawFunc = nullptr;
 
 
 
     // 更新関数
-    std::function<void() >FadeInUpdate();
-    std::function<void() > NormalUpdate();
-    std::function<void() > FadeOutUpdate();
+    void FadeInUpdate();
+    void NormalUpdate();
+    void FadeOutUpdate();
 
-    std::function<void() > ChangeScene(std::shared_ptr<Scene> next);
+    void ChangeScene(std::shared_ptr<Scene> next);
 
 
     // 描画関数
-    std::function<void() > FadeDraw();
-    std::function<void() > NormalDraw();
+    void FadeDraw();
+    void NormalDraw();
 
 };
 
