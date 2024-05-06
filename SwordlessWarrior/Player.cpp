@@ -36,3 +36,24 @@ void Player::Hit()
 	
 }
 
+void Player::IdleUpdate()
+{
+}
+
+void Player::WalkingUpdate()
+{
+	int m_inputX = 0;
+	int m_inputY = 0;
+	GetJoypadAnalogInput(&m_inputX, &m_inputY, DX_INPUT_PAD1);
+	if (m_velocity.x != 0)
+	{
+		m_velocity.x = m_inputX;
+
+	}
+
+	m_velocity.z = m_inputY;
+	
+	
+
+}
+
