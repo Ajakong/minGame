@@ -67,6 +67,7 @@ bool Application::Init()
 
     SetUseASyncChangeWindowModeFunction(TRUE, NULL, NULL);
 
+
     SetWindowText("HotSpring");
     if (DxLib_Init() == -1)
     {

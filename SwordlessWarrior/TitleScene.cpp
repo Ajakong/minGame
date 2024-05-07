@@ -94,7 +94,7 @@ void TitleScene::NormalUpdate()
 	if (m_playAnimTime > 565)m_back = true;
 	if (m_playAnimTime < 0)m_back = false;
 
-	MV1SetPosition(m_modelHandle, VGet(0,0,0));
+	MV1SetPosition(m_modelHandle, VGet(800,400,-650));
 
 	MV1SetAttachAnimTime(m_modelHandle, m_attach_move, m_playAnimTime);
 		

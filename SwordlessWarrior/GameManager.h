@@ -20,6 +20,8 @@ private:
 	std::shared_ptr<Player> player;
 	std::shared_ptr<Camera> camera;
 
+	int m_stageHandle = 0;
+
 	bool m_isGameOverFlag = false;
 	bool m_isClearFlag = false;
 

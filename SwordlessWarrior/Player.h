@@ -6,7 +6,7 @@
 class Player : public Object
 {
 public:
-	Player(int& modelhandle);
+	Player(int modelhandle);
 	~Player();
 
 	void Init();
@@ -15,7 +15,8 @@ public:
 	void Draw();
 
 	VECTOR GetPos()const { return m_pos; }
-
+	void WantCameraToPlayer(VECTOR cameraToPlayer);
+	
 	void Hit();
 
 	//メンバ関数ポインタ
@@ -27,12 +28,27 @@ private:
 	void StartUpdate();
 	void IdleUpdate();
 	void WalkingUpdate();
-	void NeutralUpdate();
-	void FaceDownUpdate();
 	void JumpingUpdate();
+
+	VECTOR GetCameraToPlayer()const;
 
 
 private:
 	VECTOR m_velocity;
+	VECTOR m_cameraToPlayer;
+
+
+	//アニメーション変数
+	int m_anim_nutral = 0;
+	int m_anim_move = 0;
+	int m_anim_jump = 0;
+	int m_attach_move = 0;
+	int m_attach_jump = 0;
+
+	float m_playAnimTime = 0.0f;
+	float m_animTime_move = 0.0f;
+
+	float m_playerRotateY = 0;
+
 };
 
