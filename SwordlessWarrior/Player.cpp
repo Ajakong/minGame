@@ -128,8 +128,18 @@ void Player::WalkingUpdate()
 	m_pos=VAdd(m_pos, m_velocity);
 
 	MV1SetPosition(m_modelHandle, m_pos);
+	
 	m_playerRotateY = atan((float)m_velocity.x / (float)m_velocity.z);
-	MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
+
+	if (m_velocity.z < 0)
+	{
+		MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
+	}
+	else
+	{
+		MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
+	}
+	
 
 }
 

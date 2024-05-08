@@ -18,7 +18,7 @@ Camera::Camera()
 	// FOV(Ž‹–ìŠp)‚ð60“x‚É
 	SetupCamera_Perspective(60.0f * (static_cast<float>(DX_PI_F) / 180.0f));
 
-	pos = VGet(-300, 300, -300);
+	pos = VGet(0, 300, -300);
 }
 
 Camera::~Camera()
