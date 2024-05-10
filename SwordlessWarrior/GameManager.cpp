@@ -27,8 +27,9 @@ void GameManager::Init()
 
 void GameManager::Update()
 {
+	player->SetCameraAngle(camera->GetCameraAngle());
 	player->Update();
-	camera->Update(player);
+	camera->Update();
 
 	for (int x = -50; x <= 50; x += 10)
 	{

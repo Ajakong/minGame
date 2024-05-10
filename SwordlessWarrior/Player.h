@@ -19,6 +19,8 @@ public:
 	
 	void Hit();
 
+	void SetCameraAngle(float cameraAngle);
+
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
 	playerState_t m_playerUpdate;
@@ -31,7 +33,6 @@ private:
 	void JumpingUpdate();
 
 	VECTOR GetCameraToPlayer()const;
-
 
 private:
 	VECTOR m_velocity;
@@ -49,6 +50,8 @@ private:
 	float m_animTime_move = 0.0f;
 
 	float m_playerRotateY = 0;
+
+	float m_cameraAngle = 0;
 
 };
 

@@ -11,7 +11,8 @@
 
 Player::Player(int modelhandle) :Object(modelhandle),
 	m_playerUpdate(&Player::IdleUpdate),
-	m_velocity(VGet(0,0,0))
+	m_velocity(VGet(0,0,0)),
+	m_cameraAngle(0)
 {
 	MV1SetPosition(m_modelHandle, VGet(0, 0, 0));
 	m_anim_move = MV1LoadModel("player/Run.mv1");
@@ -53,6 +54,11 @@ void Player::Hit()
 	
 }
 
+void Player::SetCameraAngle(float cameraAngle)
+{
+	m_cameraAngle = cameraAngle;
+}
+
 void Player::StartUpdate()
 {
 }
@@ -63,12 +69,7 @@ void Player::IdleUpdate()
 	int m_inputY = 0;
 	GetJoypadAnalogInput(&m_inputX, &m_inputY, DX_INPUT_PAD1);
 	Vec2 stickInput((float)m_inputX, -(float)m_inputY);
-	stickInput.Normalize();
-
-	m_velocity.x = stickInput.x;
-
-	m_velocity.z = stickInput.y;//上入力で奥に移動
-	if (stickInput.Length() != 0)
+	if (stickInput.Length() >= 1)
 	{
 		m_playerUpdate = &Player::WalkingUpdate;
 	}
@@ -79,8 +80,6 @@ void Player::IdleUpdate()
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 
-	
-	m_playerUpdate = &Player::WalkingUpdate;
 
 	MV1SetPosition(m_modelHandle, m_pos);
 	m_playerRotateY = atan((float)m_velocity.x/(float)m_velocity.z);
@@ -98,8 +97,7 @@ void Player::WalkingUpdate()
 
 	}*/
 	Vec2 stickInput((float)m_inputX, -(float)m_inputY);
-	stickInput.Normalize();
-	if (stickInput.Length() != 0)
+	if (stickInput.Length() >= 1)
 	{
 		m_playerUpdate = &Player::WalkingUpdate;
 	}
@@ -107,6 +105,7 @@ void Player::WalkingUpdate()
 	{
 		m_playerUpdate = &Player::IdleUpdate;
 	}
+	stickInput.Normalize();
 
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
@@ -114,22 +113,18 @@ void Player::WalkingUpdate()
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 
+	//ベクトル調整
 	m_velocity.x = stickInput.x;
-
 	m_velocity.z = stickInput.y;//上入力で奥に移動
+	MATRIX mtx = MGetRotY(-m_cameraAngle - DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
+	m_velocity = VTransform(m_velocity, mtx);
 
-	//アニメーション
-	m_playAnimTime += 0.5f ;
-	if (m_playAnimTime > 16)m_playAnimTime = 0.0f;
-
-	MV1SetAttachAnimTime(m_modelHandle, m_attach_move, m_playAnimTime);
-	//
-
+	//モデルの移動
 	m_pos=VAdd(m_pos, m_velocity);
 
-	MV1SetPosition(m_modelHandle, m_pos);
 	
-	m_playerRotateY = atan((float)m_velocity.x / (float)m_velocity.z);
+	
+	m_playerRotateY = -atan2f((float)m_velocity.z, (float)m_velocity.x )-DX_PI_F/2;
 
 	if (m_velocity.z < 0)
 	{
@@ -141,6 +136,18 @@ void Player::WalkingUpdate()
 	}
 	
 
+	//アニメーション
+	m_playAnimTime += 0.5f;
+	if (m_playAnimTime > 16)m_playAnimTime = 0.0f;
+	MV1SetAttachAnimTime(m_modelHandle, m_attach_move, m_playAnimTime);
+
+	//モデルのサイズ調整
+	MATRIX scaleMtx = MGetScale(VGet(0.2f, 0.2f, 0.2f));//XYZそれぞれ1/5スケール
+	MATRIX moveMtx = MGetTranslate(m_velocity);
+	MATRIX modelMtx = MMult(scaleMtx, moveMtx);
+	MV1SetMatrix(m_modelHandle, scaleMtx);
+
+	//MV1SetPosition(m_modelHandle, m_pos);
 }
 
 void Player::JumpingUpdate()

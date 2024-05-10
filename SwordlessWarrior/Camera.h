@@ -12,10 +12,12 @@ public:
 	Camera();							// コンストラクタ.
 	~Camera();							// デストラクタ.
 
-	void Update(std::shared_ptr<Player> player);	// 更新.
+	void Update();	// 更新.
 	VECTOR cameraToPlayer(std::shared_ptr<Player> player);
 	// ポジションのgetter/setter.
 	const VECTOR& GetPos() const { return pos; }
+
+	float GetCameraAngle() const { return cameraAngle; }
 
 private:
 	VECTOR	pos;			// ポジション.

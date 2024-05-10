@@ -18,7 +18,7 @@ Camera::Camera()
 	// FOV(‹–ìŠp)‚ğ60“x‚É
 	SetupCamera_Perspective(60.0f * (static_cast<float>(DX_PI_F) / 180.0f));
 
-	pos = VGet(0, 300, -300);
+	pos = VGet(-300, 300, -300);
 }
 
 Camera::~Camera()
@@ -26,15 +26,12 @@ Camera::~Camera()
 	// ˆ—‚È‚µ.
 }
 
-void Camera::Update(std::shared_ptr<Player> player)
+void Camera::Update()
 {
 
-	//SetCameraNearFar(1.0f, 180.0f);
-	VECTOR cameraPos;
-	cameraPos.x = cosf(cameraAngle) * kCameraDist;
-	cameraPos.y = kCameraHeight+velocity.y;
-	cameraPos.z = sinf(cameraAngle) * kCameraDist;
-	SetCameraPositionAndTarget_UpVecY(pos,player->GetPos());
+	
+	
+	SetCameraPositionAndTarget_UpVecY(pos,VGet(0,0,0));
 
 	Pad::Update();
 }
