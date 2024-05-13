@@ -2,6 +2,7 @@
 #include<iostream>
 
 class Player;
+class Enemy;
 class Camera;
 
 using namespace std;
@@ -18,6 +19,7 @@ public:
 	bool GetClear() { return m_isClearFlag; }
 private:
 	std::shared_ptr<Player> player;
+	std::shared_ptr<Enemy> enemy;
 	std::shared_ptr<Camera> camera;
 
 	int m_stageHandle = 0;

@@ -15,7 +15,7 @@ Player::Player(int modelhandle) :Object(modelhandle),
 	m_cameraAngle(0)
 {
 	MV1SetPosition(m_modelHandle, VGet(0, 0, 0));
-	m_anim_move = MV1LoadModel("player/Run.mv1");
+	m_anim_move = MV1LoadModel("model/Run.mv1");
 	m_attach_move = MV1AttachAnim(m_modelHandle, 0, m_anim_move);
 }
 
@@ -80,9 +80,12 @@ void Player::IdleUpdate()
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 
+	MATRIX scaleMtx = MGetScale(VGet(0.2f, 0.2f, 0.2f));//XYZそれぞれ1/5スケール
+	MV1SetMatrix(m_modelHandle, scaleMtx);
+
 
 	MV1SetPosition(m_modelHandle, m_pos);
-	m_playerRotateY = atan((float)m_velocity.x/(float)m_velocity.z);
+	m_playerRotateY = atan2f((float)m_velocity.x,(float)m_velocity.z);
 	MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
 }
 
@@ -119,11 +122,6 @@ void Player::WalkingUpdate()
 	MATRIX mtx = MGetRotY(-m_cameraAngle - DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
 	m_velocity = VTransform(m_velocity, mtx);
 
-	//モデルの移動
-	m_pos=VAdd(m_pos, m_velocity);
-
-	
-	
 	m_playerRotateY = -atan2f((float)m_velocity.z, (float)m_velocity.x )-DX_PI_F/2;
 
 	if (m_velocity.z < 0)
@@ -135,7 +133,6 @@ void Player::WalkingUpdate()
 		MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
 	}
 	
-
 	//アニメーション
 	m_playAnimTime += 0.5f;
 	if (m_playAnimTime > 16)m_playAnimTime = 0.0f;
@@ -143,11 +140,10 @@ void Player::WalkingUpdate()
 
 	//モデルのサイズ調整
 	MATRIX scaleMtx = MGetScale(VGet(0.2f, 0.2f, 0.2f));//XYZそれぞれ1/5スケール
-	MATRIX moveMtx = MGetTranslate(m_velocity);
+	MATRIX moveMtx = MGetTranslate(VGet(m_velocity.x*10,m_velocity.y*10,m_velocity.z*10));
 	MATRIX modelMtx = MMult(scaleMtx, moveMtx);
 	MV1SetMatrix(m_modelHandle, scaleMtx);
 
-	//MV1SetPosition(m_modelHandle, m_pos);
 }
 
 void Player::JumpingUpdate()

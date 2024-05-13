@@ -45,9 +45,11 @@ private:
 	int m_anim_jump = 0;
 	int m_attach_move = 0;
 	int m_attach_jump = 0;
+	int m_attach_idle = 0;
 
 	float m_playAnimTime = 0.0f;
 	float m_animTime_move = 0.0f;
+	
 
 	float m_playerRotateY = 0;
 
