@@ -1,6 +1,7 @@
 #include <DxLib.h>
 #include <cassert>
 #include"Camera.h"
+#include"SkyDome.h"
 #include "Application.h"
 #include "SceneManager.h"
 #include "TitleScene.h"
@@ -23,7 +24,8 @@ TitleScene::TitleScene(SceneManager& manager) :
 	m_modelHandle(MV1LoadModel("model/knight.mv1")),
 	m_model_sit(MV1LoadModel("model/Sitting.mv1")),
 	m_stageBgm(LoadSoundMem("BGM/title.mp3")),
-	m_camera(std::make_shared<Camera>())
+	m_camera(std::make_shared<Camera>()),
+	m_skyDome(std::make_shared<SkyDome>())
 {
 	PlaySoundMem(m_stageBgm, DX_PLAYTYPE_LOOP);
 	m_updateFunc = &TitleScene::FadeInUpdate;
@@ -93,6 +95,7 @@ void TitleScene::NormalUpdate()
 	}
 	if (m_playAnimTime > 565)m_playAnimTime = 0;
 	
+	m_skyDome->Update();
 
 	MV1SetPosition(m_modelHandle, VGet(800,400,-650));
 
@@ -140,7 +143,7 @@ void TitleScene::NormalDraw()
 {
 	DrawFormatString(0, 0, 0xffffff, "TitleScene");
 
-
+	m_skyDome->Draw();
 
 	MV1DrawModel(m_modelHandle);
 	

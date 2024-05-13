@@ -22,10 +22,13 @@ namespace
 
 GamePlayingScene::GamePlayingScene(SceneManager& manager) :
 	Scene(manager),
-	m_gameManager(make_shared<GameManager>())
+	m_gameManager(make_shared<GameManager>()),
+	m_stageBgm(LoadSoundMem("BGM/battle.mp3"))
 {
 	m_updateFunc = &GamePlayingScene::FadeInUpdate;
 	m_drawFunc = &GamePlayingScene::FadeDraw;
+
+	PlaySoundMem(m_stageBgm, DX_PLAYTYPE_LOOP);
 }
 
 GamePlayingScene::~GamePlayingScene()
@@ -97,6 +100,7 @@ void GamePlayingScene::FadeOutUpdate()
 
 void GamePlayingScene::ChangeScene(std::shared_ptr<Scene> nextScene)
 {
+	StopSoundMem(m_stageBgm);
 	m_manager.ChangeScene(nextScene);
 }
 

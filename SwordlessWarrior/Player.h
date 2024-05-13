@@ -26,6 +26,12 @@ public:
 	playerState_t m_playerUpdate;
 
 private:
+	//アニメーションの進行
+   //ループしたかどうかを返す
+	bool UpdateAnim(int attachNo);
+	//アニメーションの変更
+	void ChangeAnim(int animIndex);
+
 	//状態別関数(ポインタで呼び出す)
 	void StartUpdate();
 	void IdleUpdate();
@@ -38,6 +44,11 @@ private:
 	VECTOR m_velocity;
 	VECTOR m_cameraToPlayer;
 
+	int m_currentAnimNo;//現在のアニメーション
+	int m_prevAnimNo;//変更前のアニメーション
+	float m_animBlendRate;//アニメーションの合成割合
+	//0.0f:prevが再生
+	//1.0:currentが再生
 
 	//アニメーション変数
 	int m_anim_nutral = 0;
@@ -50,9 +61,7 @@ private:
 	float m_playAnimTime = 0.0f;
 	float m_animTime_move = 0.0f;
 	
-
 	float m_playerRotateY = 0;
-
 	float m_cameraAngle = 0;
 
 };

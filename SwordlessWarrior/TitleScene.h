@@ -7,6 +7,7 @@
 class SceneMain;
 
 class Camera;
+class SkyDome;
 
 class TitleScene : public Scene
 {
@@ -48,6 +49,7 @@ private:
     float m_animTime_move = 0.0f;
 
     std::shared_ptr<Camera> m_camera;
+    std::shared_ptr<SkyDome>m_skyDome;
 
     // メンバ関数ポインタの宣言
     using UpdateFunc_t = void(TitleScene::*)();
@@ -56,7 +58,8 @@ private:
     DrawFunc_t m_drawFunc = nullptr;
 
 
-
+private:
+   
     // 更新関数
     void FadeInUpdate();
     void NormalUpdate();

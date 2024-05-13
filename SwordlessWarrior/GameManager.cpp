@@ -44,7 +44,7 @@ void GameManager::Update()
 void GameManager::Draw()
 {
 	player->Draw();
-	enemy->Draw();
+	//enemy->Draw();
 
 	MV1DrawModel(m_stageHandle);
 }

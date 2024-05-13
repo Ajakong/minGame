@@ -1,11 +1,12 @@
 #pragma once
 #include"Dxlib.h"
+#include"Collider.h"
 #include<iostream>
 
 
 using namespace std;
 
-class SphereCollision
+class SphereCollision:public Collider
 {
 public:
 	SphereCollision();
@@ -13,8 +14,6 @@ public:
 
 	void Update(VECTOR position) { pos = position; }
 private:
-	VECTOR pos;
-	int radius;
 
 };
 
