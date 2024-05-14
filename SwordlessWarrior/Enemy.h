@@ -24,6 +24,8 @@ private:
 	void StartUpdate();
 	void IdleUpdate();
 private:
+	int m_modelHandle = 0;
+
 	VECTOR m_velocity;
 
 	//アニメーション変数
@@ -35,8 +37,19 @@ private:
 
 };
 
-class EnemyBox :public Object
+class EnemyAttackBox :public Object
 {
 public:
+	EnemyAttackBox();
+	~EnemyAttackBox();
+
+	void Init();
+	void Update();
+	void Draw();
+
+private:
+	
+
+	VECTOR m_velocity;
 };
 

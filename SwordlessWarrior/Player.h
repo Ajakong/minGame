@@ -41,6 +41,9 @@ private:
 	VECTOR GetCameraToPlayer()const;
 
 private:
+	int m_modelHandle = 0;
+	int m_radius = 0;
+
 	VECTOR m_velocity;
 	VECTOR m_cameraToPlayer;
 

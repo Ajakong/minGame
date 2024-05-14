@@ -30,7 +30,6 @@ void Camera::Update()
 {
 	SetCameraPositionAndTarget_UpVecY(pos,VGet(0,0,0));
 
-	Pad::Update();
 }
 
 VECTOR Camera::cameraToPlayer(std::shared_ptr<Player> player)

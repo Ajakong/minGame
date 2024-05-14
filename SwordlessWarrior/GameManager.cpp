@@ -1,50 +1,71 @@
 #include"Loader.h"
 
 #include "GameManager.h"
+
+#include"Physic.h"
 #include"Player.h"
 #include"Enemy.h"
+#include"SkyDome.h"
 #include"Camera.h"
+#include"Pad.h"
 
+namespace nameTag
+{
+	const char* Player = "Player";
+	const char* Enemy = "Enemy";
+}
 
 GameManager::GameManager():
-	player(std::make_shared<Player>(MV1LoadModel("model/knight.mv1"))),
-	enemy(std::make_shared<Enemy>(MV1LoadModel("enemy/idle.mv1"))),
-	camera(std::make_shared<Camera>()),
-	m_stageHandle(MV1LoadModel("obj/Stage.mv1"))
+	pPhysic(std::make_shared<Physic>()),
+	pPlayer(std::make_shared<Player>(Loader::GetPlayerHandle())),
+	pEnemy(std::make_shared<Enemy>(Loader::GetEnemyHandle())),
+	pCamera(std::make_shared<Camera>()),
+	m_stageHandle(Loader::GetStageHandle()),
+	pSkyDome(std::make_shared<SkyDome>())
 {
-	
+	pPhysic->Entry(pPlayer,nameTag::Player);
+	pPhysic->Entry(pEnemy, nameTag::Enemy);
 
 }
 
 GameManager::~GameManager()
 {
+
 }
 
 void GameManager::Init()
 {
-	player->Init();
-	player->WantCameraToPlayer(camera->cameraToPlayer(player));
+	pPlayer->Init();
+	pPlayer->WantCameraToPlayer(pCamera->cameraToPlayer(pPlayer));
 	
-	enemy->Init();
+	pEnemy->Init();
 }
 
 void GameManager::Update()
 {
-	player->SetCameraAngle(camera->GetCameraAngle());
-	player->Update();
-	camera->Update();
+	pSkyDome->Update();
 
-	enemy->Update();
+	pPlayer->SetCameraAngle(pCamera->GetCameraAngle());
+	pPlayer->Update();
+	pCamera->Update();
+
+	pEnemy->Update();
 
 	
 	MV1SetPosition(m_stageHandle, VGet(0, -50, 0));
 
+	pPhysic->Update();
+
+	Pad::Update();
 }
 
 void GameManager::Draw()
 {
-	player->Draw();
-	//enemy->Draw();
+	pSkyDome->Draw();
+
+	pPlayer->Draw();
+	pEnemy->Draw();
+
 
 	MV1DrawModel(m_stageHandle);
 }

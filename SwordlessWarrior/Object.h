@@ -4,24 +4,28 @@
 #include<iostream>
 
 class SphereCollision;
+class Physic;
 
 class Object : public std::enable_shared_from_this<Object>
 {
 public:
-	Object(int& m_modelhandle);
+	Object();
 	virtual  ~Object();
 
 	virtual void Update()=0;
 	virtual void Draw() = 0;
 	virtual void Hit()=0;
 
+	void CollisionSetPos(VECTOR pos) { m_SphereCol->SetPos(pos); }
+	void CollisonSetRadius(int radius) { m_SphereCol->SetRadius(radius); }
+
+	std::shared_ptr<SphereCollision> GetSphereCol() { return m_SphereCol; }
+
 protected:
-	int m_modelHandle = 0;
+	
 	VECTOR m_pos;
 	std::shared_ptr<SphereCollision> m_SphereCol;
 
-
-
-	bool HitFlag = false;
+	bool m_isHitFlag = false;
 };
 

@@ -10,8 +10,11 @@
 
 namespace
 {
+	constexpr int kNetralRadius = 50;//通常時の当たり半径
+
 	//モデルのファイル名
 	const char* const kRunFilePath = "model/Run.mv1";
+	const char* const kRollingFilePath = "model/Rolling.mv1";
 
 	//アニメーション番号
 	constexpr int kIdleAnimIndex = 1;
@@ -33,7 +36,9 @@ namespace
 	constexpr float frameParSecond = 60.0f;
 }
 
-Player::Player(int modelhandle) :Object(modelhandle),
+Player::Player(int modelhandle) :
+	m_modelHandle(modelhandle),
+	m_radius(kNetralRadius),
 	m_playerUpdate(&Player::IdleUpdate),
 	m_velocity(VGet(0,0,0)),
 	m_cameraAngle(0)
@@ -41,28 +46,30 @@ Player::Player(int modelhandle) :Object(modelhandle),
 	MV1SetPosition(m_modelHandle, VGet(0, 0, 0));
 	m_anim_move = MV1LoadModel(kRunFilePath);
 	m_attach_move = MV1AttachAnim(m_modelHandle, 0, m_anim_move);
+	
 }
 
 Player::~Player()
 {
-	Physic::Exit(NameTag::Player);
+	MV1DeleteModel(m_modelHandle);
 }
 
 void Player::Init()
 {
-	Physic::Entry(m_SphereCol, shared_from_this(), NameTag::Player);
 }
 
 void Player::Update()
 {
+
 	(this->*m_playerUpdate)();
 
-	Pad::Update();
 }
 
 void Player::Draw()
 {
 	MV1DrawModel(m_modelHandle);
+	DrawSphere3D(m_pos, m_radius, 10, 0x000000, 0x00ffff, false);
+	MakeShadowMap(50, 50);
 }
 
 void Player::WantCameraToPlayer(VECTOR cameraToPlayer)
@@ -77,7 +84,7 @@ VECTOR Player::GetCameraToPlayer() const
 
 void Player::Hit()
 {
-	
+	printfDx("PlayerIsHit");
 }
 
 void Player::SetCameraAngle(float cameraAngle)
@@ -112,6 +119,9 @@ void Player::IdleUpdate()
 	MV1SetPosition(m_modelHandle, m_pos);
 	m_playerRotateY = atan2f((float)m_velocity.x,(float)m_velocity.z);
 	MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
+
+	CollisonSetRadius(m_radius);
+	CollisionSetPos(m_pos);
 }
 
 void Player::WalkingUpdate()
@@ -140,9 +150,7 @@ void Player::WalkingUpdate()
 	//ベクトル調整
 	m_velocity.x = stickInput.x;
 	m_velocity.z = stickInput.y;//上入力で奥に移動
-	MATRIX mtx = MGetRotY(-m_cameraAngle - DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
-	m_velocity = VTransform(m_velocity, mtx);
-
+	
 	m_playerRotateY = -atan2f((float)m_velocity.z, (float)m_velocity.x )-DX_PI_F/2;
 
 	if (m_velocity.z < 0)
@@ -157,12 +165,17 @@ void Player::WalkingUpdate()
 	
 	UpdateAnim(0);
 
-	//モデルのサイズ調整
+	//モデルのサイズ調整S
 	MATRIX scaleMtx = MGetScale(VGet(0.2f, 0.2f, 0.2f));//XYZそれぞれ1/5スケール
-	MATRIX moveMtx = MGetTranslate(VGet(m_velocity.x*10,m_velocity.y*10,m_velocity.z*10));
+	//角度R
+	MATRIX mtx = MGetRotY(-m_cameraAngle - DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
+	m_velocity = VTransform(m_velocity, mtx);
+	//移動T
+	MATRIX moveMtx = MGetTranslate(VGet(m_velocity.x,m_velocity.y,m_velocity.z));
 	MATRIX modelMtx = MMult(scaleMtx, moveMtx);
 	MV1SetMatrix(m_modelHandle, scaleMtx);
 
+	CollisionSetPos(m_pos);
 }
 
 void Player::JumpingUpdate()
@@ -174,6 +187,8 @@ void Player::JumpingUpdate()
 		m_pos.y = 0;
 		m_playerUpdate = &Player::IdleUpdate;
 	}
+
+	CollisionSetPos(m_pos);
 }
 
 bool Player::UpdateAnim(int attachNo)

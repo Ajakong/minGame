@@ -8,11 +8,12 @@
 
 using namespace std;
 
-namespace Physic
+class Physic
 {
+public:
 	void Update();
 
-	void Entry(std::shared_ptr<SphereCollision> collion, std::shared_ptr<Object> obj, const char* NameTag);
+	void Entry(std::shared_ptr<Object> obj, const char* NameTag);
 
 
 	void Exit( const char* NameTag);

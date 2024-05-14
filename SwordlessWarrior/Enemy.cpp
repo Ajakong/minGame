@@ -1,9 +1,10 @@
 #include "Enemy.h"
 
-Enemy::Enemy(int m_modelhandle):Object(m_modelhandle),
+Enemy::Enemy(int modelhandle):
+	m_modelHandle(modelhandle),
 	m_enemyUpdate(&Enemy::StartUpdate)
 {
-	MV1SetPosition(m_modelHandle, VGet(0, 0, 0));
+	MV1SetPosition(m_modelHandle, VGet(300, 0, 300));
 }
 
 Enemy::~Enemy()
@@ -12,6 +13,7 @@ Enemy::~Enemy()
 
 void Enemy::Init()
 {
+
 }
 
 void Enemy::Update()
@@ -31,6 +33,7 @@ void Enemy::WantCameratoPlayer(VECTOR cameraToPlayer)
 
 void Enemy::Hit()
 {
+	printfDx("EnemyIsHit");
 }
 
 void Enemy::SetCameraAngle(float cameraAngle)
@@ -42,5 +45,27 @@ void Enemy::StartUpdate()
 }
 
 void Enemy::IdleUpdate()
+{
+}
+
+//çUåÇ
+
+EnemyAttackBox::EnemyAttackBox()
+{
+}
+
+EnemyAttackBox::~EnemyAttackBox()
+{
+}
+
+void EnemyAttackBox::Init()
+{
+}
+
+void EnemyAttackBox::Update()
+{
+}
+
+void EnemyAttackBox::Draw()
 {
 }

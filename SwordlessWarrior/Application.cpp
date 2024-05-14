@@ -8,6 +8,7 @@
 #include <cassert>
 
 #include"WorldTimer.h"
+#include"Loader.h"
 
 namespace
 {
@@ -34,6 +35,9 @@ Application::Application()
 
 void Application::Terminate()
 {
+
+    Loader::Delete();
+
     DxLib_End();
 }
 
@@ -68,7 +72,9 @@ bool Application::Init()
     SetUseASyncChangeWindowModeFunction(TRUE, NULL, NULL);
 
 
-    SetWindowText("HotSpring");
+    SetWindowText("DieEasy");
+    Loader::Load();
+    Loader::TitleLoad();
     if (DxLib_Init() == -1)
     {
         return false;
@@ -77,6 +83,8 @@ bool Application::Init()
 
     SetDrawScreen(DX_SCREEN_BACK);
     return true;
+
+   
 }
 
 void Application::Run()
@@ -120,7 +128,7 @@ void Application::Run()
             while (16667 > GetNowHiPerformanceCount() - time) {};
         }
     }
-    //Terminate();
+    Terminate();
     std::vector<VECTOR> num;
 
 }

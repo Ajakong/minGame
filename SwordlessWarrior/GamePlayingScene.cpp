@@ -11,6 +11,7 @@
 #include"WorldTimer.h"
 
 #include"GameManager.h"
+#include"Loader.h"
 
 namespace
 {
@@ -28,11 +29,14 @@ GamePlayingScene::GamePlayingScene(SceneManager& manager) :
 	m_updateFunc = &GamePlayingScene::FadeInUpdate;
 	m_drawFunc = &GamePlayingScene::FadeDraw;
 
+	Loader::GameOverSceneLoad();
+
 	PlaySoundMem(m_stageBgm, DX_PLAYTYPE_LOOP);
 }
 
 GamePlayingScene::~GamePlayingScene()
 {
+	Loader::GameSceneDelete();
 }
 
 void GamePlayingScene::Update()

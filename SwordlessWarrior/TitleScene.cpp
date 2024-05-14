@@ -10,6 +10,8 @@
 #include"Game.h"
 #include"Pad.h"
 
+#include"Loader.h"
+
 namespace
 {
 	constexpr int kFadeFrameMax = 60;
@@ -20,10 +22,10 @@ namespace
 
 TitleScene::TitleScene(SceneManager& manager) :
 	Scene(manager),
-	m_titleHandle(LoadGraph("Title/Title.png")),
-	m_modelHandle(MV1LoadModel("model/knight.mv1")),
-	m_model_sit(MV1LoadModel("model/Sitting.mv1")),
-	m_stageBgm(LoadSoundMem("BGM/title.mp3")),
+	m_titleHandle(),
+	m_modelHandle(Loader::GetPlayerHandle()),
+	m_model_sit(Loader::GetAnimationSitting()),
+	m_stageBgm(Loader::GetBGM_title()),
 	m_camera(std::make_shared<Camera>()),
 	m_skyDome(std::make_shared<SkyDome>())
 {
@@ -34,14 +36,17 @@ TitleScene::TitleScene(SceneManager& manager) :
 	m_attach_move = MV1AttachAnim(m_modelHandle, 0, m_model_sit);
 	m_modelHandle = MV1DuplicateModel(m_modelHandle);
 	m_attach_move = MV1AttachAnim(m_modelHandle, 0, m_model_sit);
+
+	Loader::GameSceneLoad();
+
+	SetFogEnable(TRUE);					// フォグを有効にする
+	SetFogColor(200, 120, 0);			// フォグの色にする
+	SetFogStartEnd(10.0f, 4000.0f);	// フォグの開始距離
 }
 
 TitleScene::~TitleScene()
 {
-	MV1DeleteModel(m_modelHandle);
-	MV1DeleteModel(m_model_sit);
-	DeleteSoundMem(m_stageBgm);
-	DeleteGraph(m_titleHandle);
+	Loader::TitleDelete();
 }
 
 void TitleScene::Update()

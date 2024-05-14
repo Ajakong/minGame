@@ -1,6 +1,8 @@
 #include"Dxlib.h"
 #include "SkyDome.h"
 
+#include"Loader.h"
+
 SkyDome::SkyDome():
 	m_model(MV1LoadModel("skydome/Dome.mv1"))
 {

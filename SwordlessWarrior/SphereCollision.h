@@ -13,7 +13,16 @@ public:
 	~SphereCollision();
 
 	void Update(VECTOR position) { pos = position; }
-private:
 
+	void SetPos(VECTOR pos) { m_pos = pos; }
+	void SetRadius(int radius) { m_radius = radius; }
+
+	VECTOR GetPos() { return m_pos; }
+	int GetRadius() { return m_radius; }
+
+
+protected:
+	VECTOR m_pos;
+	int m_radius;
 };
 
