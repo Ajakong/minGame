@@ -16,8 +16,8 @@ public:
 	virtual void Draw() = 0;
 	virtual void Hit()=0;
 
-	void CollisionSetPos(VECTOR pos) { m_SphereCol->SetPos(pos); }
-	void CollisonSetRadius(int radius) { m_SphereCol->SetRadius(radius); }
+	void CollisionSetPos(VECTOR pos);
+	void CollisonSetRadius(int radius);
 
 	std::shared_ptr<SphereCollision> GetSphereCol() { return m_SphereCol; }
 
