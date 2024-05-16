@@ -160,6 +160,7 @@
     <ClCompile Include="SkyDome.cpp" />
     <ClCompile Include="SphereCollision.cpp" />
     <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="UI.cpp" />
     <ClCompile Include="Vec2.cpp" />
     <ClCompile Include="WorldTimer.cpp" />
   </ItemGroup>
@@ -186,6 +187,7 @@
     <ClInclude Include="SkyDome.h" />
     <ClInclude Include="SphereCollision.h" />
     <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="WorldTimer.h" />
   </ItemGroup>

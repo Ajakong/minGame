@@ -71,6 +71,9 @@ bool Application::Init()
 
     SetUseASyncChangeWindowModeFunction(TRUE, NULL, NULL);
 
+    SetUseZBuffer3D(true);
+    SetWriteZBuffer3D(true);
+    SetUseBackCulling(true);
 
     SetWindowText("DieEasy");
     Loader::Load();
