@@ -6,9 +6,13 @@ namespace Loader
 	int GetPlayerHandle();
 	int GetEnemyHandle();
 	int GetStageHandle();
+	int GetSkyDomeHandle();
 
 	//3Danimationハンドル
+	int GetAnimationIdle();
 	int GetAnimationSitting();
+	int GetAnimationRun();
+	int GetAnimationHit();
 
 	//Soundハンドル
 	int GetBGM_title();

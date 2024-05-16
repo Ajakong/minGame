@@ -156,6 +156,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="SkyDome.cpp" />
     <ClCompile Include="SphereCollision.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Shadow.h" />
     <ClInclude Include="SkyDome.h" />
     <ClInclude Include="SphereCollision.h" />
     <ClInclude Include="TitleScene.h" />

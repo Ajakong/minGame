@@ -4,7 +4,7 @@
 #include"Loader.h"
 
 SkyDome::SkyDome():
-	m_model(MV1LoadModel("skydome/Dome.mv1"))
+	m_model(Loader::GetSkyDomeHandle())
 {
 	MV1SetPosition(m_model, VGet(0, 0, 0));
 	MATRIX scaleMtx = MGetScale(VGet(50.0f, 50.0f, 5.0f));//XYZÇªÇÍÇºÇÍ1/5ÉXÉPÅ[Éã

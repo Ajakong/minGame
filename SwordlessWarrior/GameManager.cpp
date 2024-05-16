@@ -2,6 +2,7 @@
 
 #include "GameManager.h"
 
+#include"Shadow.h"
 #include"Physic.h"
 #include"Player.h"
 #include"Enemy.h"
@@ -16,6 +17,7 @@ namespace nameTag
 }
 
 GameManager::GameManager():
+	pShadow(std::make_shared<Shadow>()),
 	pPhysic(std::make_shared<Physic>()),
 	pPlayer(std::make_shared<Player>(Loader::GetPlayerHandle())),
 	pEnemy(std::make_shared<Enemy>(Loader::GetEnemyHandle())),
@@ -35,6 +37,8 @@ GameManager::~GameManager()
 
 void GameManager::Init()
 {
+	pShadow->SetLight();
+
 	pPlayer->Init();
 	pPlayer->WantCameraToPlayer(pCamera->cameraToPlayer(pPlayer));
 	
@@ -50,8 +54,6 @@ void GameManager::Update()
 	pCamera->Update();
 
 	pEnemy->Update();
-
-	
 	MV1SetPosition(m_stageHandle, VGet(0, -50, 0));
 
 	pPhysic->Update();
@@ -61,11 +63,24 @@ void GameManager::Update()
 
 void GameManager::Draw()
 {
+
 	pSkyDome->Draw();
+
+	pShadow->Draw();
 
 	pPlayer->Draw();
 	pEnemy->Draw();
-
-
 	MV1DrawModel(m_stageHandle);
+
+	pShadow->DrawEnd();
+
+	pShadow->UseShadowMap();
+
+	pPlayer->Draw();
+	pEnemy->Draw();
+	MV1DrawModel(m_stageHandle);
+
+	pShadow->Fin();
+
+
 }

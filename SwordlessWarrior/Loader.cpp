@@ -4,20 +4,25 @@
 namespace
 {
 	//3Dmodelハンドル
-	int playerHandle = 0;
-	int enemyHandle = 0;
-	int stageHandle = 0;
+	int playerHandle = -1;
+	int enemyHandle = -1;
+	int stageHandle = -1;
+
+	int skydomeHandle = -1;
 
 	//3Danimationハンドル
-	int anim_sitting = 0;
+	int anim_idle = -1;
+	int anim_sitting = -1;
+	int anim_run = -1;
+	int anim_hit = -1;
 
 	//Soundハンドル
-	int BGM_Title = 0;
-	int BGM_Battle = 0;
-	int BGM_Ending = 0;
+	int BGM_Title = -1;
+	int BGM_Battle = -1;
+	int BGM_Ending = -1;
 
 	//2Dtextureハンドル
-	int titleHandle = 0;
+	int titleHandle = -1;
 }
 
 namespace Loader
@@ -34,9 +39,25 @@ namespace Loader
 	{
 		return stageHandle;
 	}
+	int GetSkyDomeHandle()
+	{
+		return skydomeHandle;
+	}
+	int GetAnimationIdle()
+	{
+		return anim_idle;
+	}
 	int GetAnimationSitting()
 	{
 		return anim_sitting;
+	}
+	int GetAnimationRun()
+	{
+		return anim_run;
+	}
+	int GetAnimationHit()
+	{
+		return anim_hit;
 	}
 	int GetBGM_title()
 	{
@@ -56,6 +77,9 @@ namespace Loader
 	}
 	void TitleLoad()
 	{
+		//3Danimationハンドル
+		anim_sitting = MV1LoadModel("Player/Sitting.mv1");
+
 		//Soundハンドル
 		BGM_Title = LoadSoundMem("BGM/title.mp3");
 
@@ -64,6 +88,9 @@ namespace Loader
 	}
 	void TitleDelete()
 	{
+		//3Danimationハンドル
+		MV1DeleteModel(anim_sitting);
+
 		//Soundハンドル
 		DeleteSoundMem(BGM_Title);
 
@@ -76,6 +103,11 @@ namespace Loader
 		enemyHandle = MV1LoadModel("enemy/idle.mv1");
 		stageHandle = MV1LoadModel("obj/Stage.mv1");
 
+		//3Danimationハンドル
+		anim_run = MV1LoadModel("Player/Run.mv1");
+		anim_hit = MV1LoadModel("Player/Hit.mv1");
+		anim_idle= MV1LoadModel("Player/Idle.mv1");
+
 		//Soundハンドル
 		BGM_Battle = LoadSoundMem("BGM/battle.mp3");
 		BGM_Ending = LoadSoundMem("BGM/ending.mp3");
@@ -85,6 +117,11 @@ namespace Loader
 		//3Dmodelハンドル
 		MV1DeleteModel(enemyHandle);
 		MV1DeleteModel(stageHandle);
+
+		//3Danimationハンドル
+		MV1DeleteModel(anim_run);
+		MV1DeleteModel(anim_hit);
+		MV1DeleteModel(anim_idle);
 
 		//Soundハンドル
 		DeleteSoundMem(BGM_Battle);
@@ -102,9 +139,9 @@ namespace Loader
 	void Loader::Load()
 	{
 		//3Dmodelハンドル
-		playerHandle = MV1LoadModel("model/knight.mv1");
-		//3Danimationハンドル
-		anim_sitting = MV1LoadModel("model/Sitting.mv1");
+		playerHandle = MV1LoadModel("Player/knight.mv1");
+		
+		skydomeHandle = MV1LoadModel("skydome/Dome.mv1");
 	}
 
 	void Delete()

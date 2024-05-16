@@ -24,7 +24,7 @@ namespace
 GamePlayingScene::GamePlayingScene(SceneManager& manager) :
 	Scene(manager),
 	m_gameManager(make_shared<GameManager>()),
-	m_stageBgm(LoadSoundMem("BGM/battle.mp3"))
+	m_stageBgm(Loader::GetBGM_battle())
 {
 	m_updateFunc = &GamePlayingScene::FadeInUpdate;
 	m_drawFunc = &GamePlayingScene::FadeDraw;

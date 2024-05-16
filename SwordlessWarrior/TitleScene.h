@@ -26,7 +26,6 @@ private:
     int m_model_sit = 0;
     int m_attach_move = 0;
 
-    int m_btnFrame = 0;
     int m_frame = 0;
 
     bool m_back = false;

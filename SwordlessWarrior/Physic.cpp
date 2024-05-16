@@ -25,7 +25,7 @@ void Physic::Update()
 
 			//”¼Œa‚Ì‡Œv
 			int totalRadius = obj1.second->GetSphereCol()->GetRadius() + obj2.second->GetSphereCol()->GetRadius();
-			if (Distance <= totalRadius)//’†S‚Ì‹——£‚ª”¼Œa‚Ì‡ŒvˆÈ‰º‚È‚çÕ“Ë
+			if (Distance < totalRadius)//’†S‚Ì‹——£‚ª”¼Œa‚Ì‡Œv–¢–ž‚È‚çÕ“Ë‚É‚·‚é
 			{
 				obj1.second->Hit();
 				obj2.second->Hit();

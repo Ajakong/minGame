@@ -23,7 +23,10 @@ public:
 private:
 	void StartUpdate();
 	void IdleUpdate();
+	void OnDamageUpdate();
 private:
+	int m_radius=0;
+
 	int m_modelHandle = 0;
 
 	VECTOR m_velocity;

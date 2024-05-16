@@ -21,6 +21,8 @@ public:
 
 	void SetCameraAngle(float cameraAngle);
 
+	int GetPlayerModelhandle() { return m_modelHandle; }
+
 	//メンバ関数ポインタ
 	using playerState_t = void(Player::*)();
 	playerState_t m_playerUpdate;
@@ -37,6 +39,7 @@ private:
 	void IdleUpdate();
 	void WalkingUpdate();
 	void JumpingUpdate();
+	void OnDamageUpdate();
 
 	VECTOR GetCameraToPlayer()const;
 
@@ -56,8 +59,10 @@ private:
 	//アニメーション変数
 	int m_anim_nutral = 0;
 	int m_anim_move = 0;
+	int m_anim_hit = 0;
 	int m_anim_jump = 0;
 	int m_attach_move = 0;
+	int m_attach_hit = 0;
 	int m_attach_jump = 0;
 	int m_attach_idle = 0;
 

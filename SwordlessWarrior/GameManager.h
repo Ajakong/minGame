@@ -1,6 +1,7 @@
 #pragma once
 #include<iostream>
 
+class Shadow;
 class Physic;
 class Player;
 class Enemy;
@@ -20,9 +21,10 @@ public:
 	bool GetGameOver() { return m_isGameOverFlag; }
 	bool GetClear() { return m_isClearFlag; }
 private:
+	std::shared_ptr<Shadow> pShadow;
 	std::shared_ptr<Physic> pPhysic;
 	std::shared_ptr<Player> pPlayer;
-	std::shared_ptr<Enemy> pEnemy;
+	std::shared_ptr<Enemy>  pEnemy;
 	std::shared_ptr<Camera> pCamera;
 	std::shared_ptr<SkyDome>pSkyDome;
 

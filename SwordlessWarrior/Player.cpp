@@ -12,10 +12,6 @@ namespace
 {
 	constexpr int kNetralRadius = 50;//通常時の当たり半径
 
-	//モデルのファイル名
-	const char* const kRunFilePath = "model/Run.mv1";
-	const char* const kRollingFilePath = "model/Rolling.mv1";
-
 	//アニメーション番号
 	constexpr int kIdleAnimIndex = 1;
 	//constexpr int kIdleAnimIndex = 2;//待機テスト
@@ -37,25 +33,28 @@ namespace
 }
 
 Player::Player(int modelhandle) :
-	m_modelHandle(modelhandle),
+	m_modelHandle(MV1DuplicateModel(modelhandle)),
 	m_radius(kNetralRadius),
 	m_playerUpdate(&Player::IdleUpdate),
 	m_velocity(VGet(0,0,0)),
 	m_cameraAngle(0)
 {
 	MV1SetPosition(m_modelHandle, VGet(0, 0, 0));
-	m_anim_move = MV1LoadModel(kRunFilePath);
+	m_anim_nutral = Loader::GetAnimationIdle();
+	m_anim_move = Loader::GetAnimationRun();
+	m_anim_hit = Loader::GetAnimationHit();
 	m_attach_move = MV1AttachAnim(m_modelHandle, 0, m_anim_move);
-	
+	m_attach_hit = MV1AttachAnim(m_modelHandle, 0, m_anim_hit);
 }
 
 Player::~Player()
 {
-	MV1DeleteModel(m_modelHandle);
+	//処理なし
 }
 
 void Player::Init()
 {
+	//処理なし
 }
 
 void Player::Update()
@@ -85,6 +84,8 @@ VECTOR Player::GetCameraToPlayer() const
 void Player::Hit()
 {
 	printfDx("PlayerIsHit");
+	ChangeAnim(m_attach_hit);
+	m_playerUpdate = &Player::OnDamageUpdate;
 }
 
 void Player::SetCameraAngle(float cameraAngle)
@@ -104,16 +105,18 @@ void Player::IdleUpdate()
 	Vec2 stickInput((float)m_inputX, -(float)m_inputY);
 	if (stickInput.Length() >= 1)
 	{
+		ChangeAnim(m_anim_move);
 		m_playerUpdate = &Player::WalkingUpdate;
 	}
 
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
+		ChangeAnim(m_anim_jump);
 		m_velocity.y += 50;
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
 
-	MATRIX scaleMtx = MGetScale(VGet(0.2f, 0.2f, 0.2f));//XYZそれぞれ1/5スケール
+	MATRIX scaleMtx = MGetScale(VGet(0.3f, 0.3f, 0.3f));//XYZそれぞれ1/5スケール
 	MV1SetMatrix(m_modelHandle, scaleMtx);
 
 	MV1SetPosition(m_modelHandle, m_pos);
@@ -122,6 +125,8 @@ void Player::IdleUpdate()
 
 	CollisonSetRadius(m_radius);
 	CollisionSetPos(m_pos);
+
+	UpdateAnim(m_anim_nutral);
 }
 
 void Player::WalkingUpdate()
@@ -131,18 +136,12 @@ void Player::WalkingUpdate()
 	GetJoypadAnalogInput(&m_inputX, &m_inputY, DX_INPUT_PAD1);
 
 	Vec2 stickInput((float)m_inputX, -(float)m_inputY);
-	if (stickInput.Length() >= 1)
-	{
-		m_playerUpdate = &Player::WalkingUpdate;
-	}
-	else
-	{
-		m_playerUpdate = &Player::IdleUpdate;
-	}
+	
 	stickInput.Normalize();
 
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
+		ChangeAnim(m_anim_jump);
 		m_velocity.y += 50;
 		m_playerUpdate = &Player::JumpingUpdate;
 	}
@@ -153,17 +152,9 @@ void Player::WalkingUpdate()
 	
 	m_playerRotateY = -atan2f((float)m_velocity.z, (float)m_velocity.x )-DX_PI_F/2;
 
-	if (m_velocity.z < 0)
-	{
-		MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
-	}
-	else
-	{
-		MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
-	}
 	int total = MV1GetAttachAnimTotalTime(m_modelHandle,m_attach_move);
 	
-	UpdateAnim(0);
+	UpdateAnim(m_anim_move);
 
 	//モデルのサイズ調整S
 	MATRIX scaleMtx = MGetScale(VGet(0.2f, 0.2f, 0.2f));//XYZそれぞれ1/5スケール
@@ -175,7 +166,10 @@ void Player::WalkingUpdate()
 	MATRIX modelMtx = MMult(scaleMtx, moveMtx);
 	MV1SetMatrix(m_modelHandle, scaleMtx);
 
+	CollisonSetRadius(m_radius);
 	CollisionSetPos(m_pos);
+
+	
 }
 
 void Player::JumpingUpdate()
@@ -184,11 +178,19 @@ void Player::JumpingUpdate()
 	MV1SetPosition(m_modelHandle, m_pos);
 	if (m_pos.y < 0)
 	{
+		ChangeAnim(m_anim_nutral);
 		m_pos.y = 0;
 		m_playerUpdate = &Player::IdleUpdate;
 	}
 
 	CollisionSetPos(m_pos);
+	UpdateAnim(m_anim_jump);
+}
+
+void Player::OnDamageUpdate()
+{
+	UpdateAnim(m_attach_hit);
+	
 }
 
 bool Player::UpdateAnim(int attachNo)

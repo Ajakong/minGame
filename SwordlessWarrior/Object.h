@@ -2,6 +2,7 @@
 #include"Dxlib.h"
 #include <functional>
 #include<iostream>
+#include"Loader.h"
 
 class SphereCollision;
 class Physic;
