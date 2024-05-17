@@ -36,8 +36,9 @@ Player::Player(int modelhandle) :
 	m_modelHandle(MV1DuplicateModel(modelhandle)),
 	m_radius(kNetralRadius),
 	m_playerUpdate(&Player::IdleUpdate),
-	m_velocity(VGet(0,0,0)),
-	m_cameraAngle(0)
+	m_velocity(VGet(0.0f,0.0f,0.0f)),
+	m_cameraAngle(0),
+	m_Hp(50)
 {
 	MV1SetPosition(m_modelHandle, VGet(0, 0, 0));
 	m_anim_nutral = Loader::GetAnimationIdle();
@@ -67,7 +68,7 @@ void Player::Update()
 void Player::Draw()
 {
 	MV1DrawModel(m_modelHandle);
-	DrawSphere3D(m_pos, m_radius, 10, 0x000000, 0x00ffff, false);
+	DrawSphere3D(m_pos,m_radius, 10, 0x000000, 0x00ffff, false);
 	MakeShadowMap(50, 50);
 }
 
@@ -84,6 +85,7 @@ VECTOR Player::GetCameraToPlayer() const
 void Player::Hit()
 {
 	printfDx("PlayerIsHit");
+	m_Hp -= 10;
 	ChangeAnim(m_attach_hit);
 	m_playerUpdate = &Player::OnDamageUpdate;
 }
@@ -152,7 +154,7 @@ void Player::WalkingUpdate()
 	
 	m_playerRotateY = -atan2f((float)m_velocity.z, (float)m_velocity.x )-DX_PI_F/2;
 
-	int total = MV1GetAttachAnimTotalTime(m_modelHandle,m_attach_move);
+	float total = MV1GetAttachAnimTotalTime(m_modelHandle,m_attach_move);
 	
 	UpdateAnim(m_anim_move);
 

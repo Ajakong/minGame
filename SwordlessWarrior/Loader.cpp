@@ -23,6 +23,7 @@ namespace
 
 	//2Dtextureƒnƒ“ƒhƒ‹
 	int titleHandle = -1;
+	int gameOverHandle = -1;
 }
 
 namespace Loader
@@ -74,6 +75,10 @@ namespace Loader
 	int GetTextureTitle()
 	{
 		return titleHandle;
+	}
+	int GetTextureGameOver()
+	{
+		return gameOverHandle;
 	}
 	void TitleLoad()
 	{
@@ -130,10 +135,12 @@ namespace Loader
 
 	void GameOverSceneLoad()
 	{
+		gameOverHandle = LoadGraph("GameOver.png");
 	}
 
 	void GameOverSceneDelete()
 	{
+		DeleteGraph(gameOverHandle);
 	}
 	
 	void Loader::Load()

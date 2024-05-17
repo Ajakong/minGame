@@ -6,10 +6,12 @@
 #include"GamePlayingScene.h"
 #include "TitleScene.h"
 #include"Pad.h"
+#include"Loader.h"
 
 
 GameOverScene::GameOverScene(SceneManager& mgr) :
 	Scene(mgr),
+	m_gameoverImg(Loader::GetTextureGameOver()),
 	m_fadeSoundFrame(200)
 {
 	m_frame = 60;
@@ -85,7 +87,7 @@ void GameOverScene::FadeOutUpdate()
 		}
 		if (m_selectNumber % 2 == 1)
 		{
-
+			Loader::GameOverSceneDelete();
 			m_manager.ChangeScene(std::make_shared<TitleScene>(m_manager));
 
 		}
@@ -100,6 +102,8 @@ void GameOverScene::FadeDraw()
 
 	DrawString(1000, 500, "Continue", 0xffffff);
 	DrawString(1000, 600, "To Title", 0xffffff);
+
+	DrawGraph(0, 0, m_gameoverImg,false);
 
 	SetDrawBlendMode(DX_BLENDMODE_ADD, alpha / 3);
 	if (m_selectNumber % 2 == 0)
@@ -122,6 +126,9 @@ void GameOverScene::NormalDraw()
 	DrawString(1000, 500, "Continue", 0xffffff);
 	DrawString(1000, 600, "To Title", 0xffffff);
 	SetDrawBlendMode(DX_BLENDMODE_ADD, 255 / 3);
+
+	DrawGraph(0, 0, m_gameoverImg, false);
+
 	if (m_selectNumber % 2 == 0)
 	{
 		DrawBox(950, 470, 1200, 530, 0xffffff, true);

@@ -13,7 +13,7 @@ namespace
 Camera::Camera()
 {
 	//‰œs0.1`1000‚Ü‚Å‚ğƒJƒƒ‰‚Ì•`‰æ”ÍˆÍ‚Æ‚·‚é
-	SetCameraNearFar(0.1f, 2000.0f);
+	SetCameraNearFar(0.1f, 1000.0f);
 
 	// FOV(‹–ìŠp)‚ğ60“x‚É
 	SetupCamera_Perspective(60.0f * (static_cast<float>(DX_PI_F) / 180.0f));

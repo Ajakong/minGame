@@ -15,14 +15,14 @@ public:
 	void Update(VECTOR position) { pos = position; }
 
 	void SetPos(VECTOR pos) { m_pos = pos; }
-	void SetRadius(int radius) { m_radius = radius; }
+	void SetRadius(float radius) { m_radius = radius; }
 
 	VECTOR GetPos() { return m_pos; }
-	int GetRadius() { return m_radius; }
+	float GetRadius() { return m_radius; }
 
 
 protected:
 	VECTOR m_pos;
-	int m_radius;
+	float m_radius;
 };
 

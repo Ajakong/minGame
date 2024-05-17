@@ -13,6 +13,7 @@ public:
     virtual void Draw();
 
 private:
+    int m_gameoverImg = 0;
 
     int m_btnFrame = 0;
     int m_frame;

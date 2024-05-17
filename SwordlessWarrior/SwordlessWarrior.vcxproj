@@ -144,6 +144,7 @@
     <ClCompile Include="Capsule.cpp" />
     <ClCompile Include="ClearScene.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="CollisionMaster.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameOverScene.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Capsule.h" />
     <ClInclude Include="ClearScene.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="CollisionMaster.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameManager.h" />

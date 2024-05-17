@@ -60,6 +60,7 @@ void GamePlayingScene::Draw()
 		ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
 	}
 	else if (m_isGameOver) {
+		Loader::GameOverSceneLoad();
 		ChangeScene(std::make_shared<GameOverScene>(m_manager));
 
 		WorldTimer::Reset();

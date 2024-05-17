@@ -10,15 +10,17 @@ class Physic;
 class Object : public std::enable_shared_from_this<Object>
 {
 public:
-	Object();
+	Object(VECTOR pos=VGet(0,0,0));
 	virtual  ~Object();
 
 	virtual void Update()=0;
 	virtual void Draw() = 0;
 	virtual void Hit()=0;
 
+	VECTOR GetPos()const { return m_pos; }
+
 	void CollisionSetPos(VECTOR pos);
-	void CollisonSetRadius(int radius);
+	void CollisonSetRadius(float radius);
 
 	std::shared_ptr<SphereCollision> GetSphereCol() { return m_SphereCol; }
 

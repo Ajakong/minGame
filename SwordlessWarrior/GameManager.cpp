@@ -14,13 +14,14 @@ namespace nameTag
 {
 	const char* Player = "Player";
 	const char* Enemy = "Enemy";
+	const char* EnemyAttackObj = "EnemyAttackObj";
 }
 
 GameManager::GameManager():
 	pShadow(std::make_shared<Shadow>()),
 	pPhysic(std::make_shared<Physic>()),
 	pPlayer(std::make_shared<Player>(Loader::GetPlayerHandle())),
-	pEnemy(std::make_shared<Enemy>(Loader::GetEnemyHandle())),
+	pEnemy(std::make_shared<Enemy>(Loader::GetEnemyHandle(),pPlayer)),
 	pCamera(std::make_shared<Camera>()),
 	m_stageHandle(Loader::GetStageHandle()),
 	pSkyDome(std::make_shared<SkyDome>())
@@ -53,11 +54,21 @@ void GameManager::Update()
 	pPlayer->Update();
 	pCamera->Update();
 
+
 	pEnemy->Update();
+
+	for (auto& obj : pEnemy->GetAttackObj())
+	{
+		pPhysic->Entry(obj, nameTag::EnemyAttackObj);
+	}
 	MV1SetPosition(m_stageHandle, VGet(0, -50, 0));
 
 	pPhysic->Update();
 
+	if (pPlayer->WatchHp() < 0)
+	{
+		m_isGameOverFlag = true;
+	}
 	Pad::Update();
 }
 

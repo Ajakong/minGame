@@ -14,10 +14,11 @@ public:
 	void Update();
 	void Draw();
 
-	VECTOR GetPos()const { return m_pos; }
+	
 	void WantCameraToPlayer(VECTOR cameraToPlayer);
 	
 	void Hit();
+	int WatchHp()const { return m_Hp; }
 
 	void SetCameraAngle(float cameraAngle);
 
@@ -44,8 +45,9 @@ private:
 	VECTOR GetCameraToPlayer()const;
 
 private:
+	int m_Hp;
 	int m_modelHandle = 0;
-	int m_radius = 0;
+	float m_radius = 0;
 
 	VECTOR m_velocity;
 	VECTOR m_cameraToPlayer;
