@@ -17,7 +17,7 @@ VECTOR norm(VECTOR a);
 
 Enemy::Enemy(int modelhandle,std::shared_ptr<Object> obj):
 	m_obj(obj),
-	m_modelHandle(modelhandle),
+	m_modelHandle(MV1DuplicateModel(modelhandle)),
 	m_enemyUpdate(&Enemy::AttackSphereUpdate),
 	m_Hp(50),
 	m_radius(kSphereRadius),
