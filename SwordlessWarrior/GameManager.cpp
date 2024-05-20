@@ -44,6 +44,12 @@ void GameManager::Init()
 	pPlayer->WantCameraToPlayer(pCamera->cameraToPlayer(pPlayer));
 	
 	pEnemy->Init();
+
+	pEnemy->SetAttackDir(pPlayer->GetPos());
+
+	SetFogEnable(TRUE);					// フォグを有効にする
+	SetFogColor(100.0f, 0.0f, 0.0f);			// フォグの色にする
+	SetFogStartEnd(0.0f, 3000.0f);	// フォグの開始距離
 }
 
 void GameManager::Update()

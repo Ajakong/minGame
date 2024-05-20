@@ -22,7 +22,7 @@ namespace
 
 TitleScene::TitleScene(SceneManager& manager) :
 	Scene(manager),
-	m_titleHandle(),
+	m_titleHandle(Loader::GetTextureTitle()),
 	m_modelHandle(Loader::GetPlayerHandle()),
 	m_model_sit(Loader::GetAnimationSitting()),
 	m_stageBgm(Loader::GetBGM_title()),
@@ -189,7 +189,7 @@ void TitleScene::FadeDraw()
 
 	MV1DrawModel(m_modelHandle);
 
-	DrawRotaGraph(800, 450, 1, 0, m_titleHandle, true);
+	DrawRotaGraph(1200, 200, 1, 0, m_titleHandle, true);
 
 	//DrawString(10, 100, "TitleScene", 0xffffff);
 	DrawFormatString(730, 650, 0xffffff, "Push Z to Start");
@@ -208,7 +208,7 @@ void TitleScene::NormalDraw()
 
 	MV1DrawModel(m_modelHandle);
 	
-	DrawRotaGraph(800, 450, 1, 0, m_titleHandle, true);
+	DrawRotaGraph(1200, 200, 1, 0, m_titleHandle, true);
 
 	//DrawString(10, 100, "TitleScene", 0xffffff);
 	DrawFormatString(730, 650, 0xffffff, "Push Z to Start");

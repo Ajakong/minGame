@@ -66,7 +66,7 @@ private:
 	int m_attach_move = 0;
 	int m_attach_hit = 0;
 	int m_attach_jump = 0;
-	int m_attach_idle = 0;
+	int m_attach_nutral = 0;
 
 	float m_playAnimTime = 0.0f;
 	float m_animTime_move = 0.0f;

@@ -2,7 +2,8 @@
 
 namespace
 {
-	constexpr float kSphereRadius = 50;
+	constexpr float kSphereRadius = 10;
+	constexpr int kSphereCreateFrame = 50;
 
 	constexpr float kFightBackObjRadius = 10;
 
@@ -17,9 +18,13 @@ VECTOR norm(VECTOR a);
 Enemy::Enemy(int modelhandle,std::shared_ptr<Object> obj):
 	m_obj(obj),
 	m_modelHandle(modelhandle),
-	m_enemyUpdate(&Enemy::StartUpdate)
+	m_enemyUpdate(&Enemy::AttackSphereUpdate),
+	m_Hp(50),
+	m_radius(kSphereRadius),
+	m_attackCoolDownCount(0),
+	m_attackDir(VGet(1.0f,0.0f,0.0f))
 {
-	MV1SetPosition(m_modelHandle, VGet(300, 0, 300));
+	MV1SetPosition(m_modelHandle, VGet(0, 0, 200));
 	CollisonSetRadius(m_radius);
 	CollisionSetPos(m_pos);
 }
@@ -41,6 +46,9 @@ void Enemy::Update()
 void Enemy::Draw()
 {
 	MV1DrawModel(m_modelHandle);
+
+	for (auto& sphere : m_sphere)sphere->Draw();
+
 }
 
 void Enemy::WantToPlayer(VECTOR cameraToPlayer)
@@ -57,6 +65,16 @@ void Enemy::SetCameraAngle(float cameraAngle)
 {
 }
 
+void Enemy::SetAttackDir(VECTOR targetPos)
+{
+	m_attackDir = norm(ToVec(GetMyPos(), targetPos));
+}
+
+VECTOR Enemy::GetMyPos()
+{
+	return VGet(m_pos.x,m_pos.y+30,m_pos.z);
+}
+
 void Enemy::StartUpdate()
 {
 
@@ -65,16 +83,20 @@ void Enemy::StartUpdate()
 void Enemy::IdleUpdate()
 {
 	//モデルのサイズ調整S
-	MATRIX scaleMtx = MGetScale(VGet(0.2f, 0.2f, 0.2f));//XYZそれぞれ1/5スケール
+	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/5スケール
 	MV1SetMatrix(m_modelHandle, scaleMtx);
 
 	m_attackCoolDownCount++;
 
 	if (m_attackCoolDownCount > kAttackCoolDownTime)
 	{
+		m_attackCoolDownCount = 0;
 		m_attackDir = norm(ToVec(m_pos, m_obj->GetPos()));//オブジェクトに向かうベクトルを正規化したもの
 		m_enemyUpdate = &Enemy::AttackSphereUpdate;
 	}
+
+
+
 }
 
 void Enemy::OnDamageUpdate()
@@ -84,15 +106,25 @@ void Enemy::OnDamageUpdate()
 
 void Enemy::AttackSphereUpdate()
 {
-	m_sphere.push_back(std::make_shared<EnemyAttackSphere>(shared_from_this(), m_pos, m_attackDir, 1));
+	m_createFrameCount++;
+	if (m_createFrameCount > kSphereCreateFrame)
+	{
+		m_createFrameCount = 0;
+		m_sphere.push_back(std::make_shared<EnemyAttackSphere>(shared_from_this(), GetMyPos(), m_attackDir, 1));
+
+	}
 	
 	for (auto& sphere : m_sphere)
 	{
+		sphere->Update();
 		if (CheckCameraViewClip(sphere->GetPos()) != 0)
 		{
 			m_sphere.pop_front();
 		}
 	}
+
+
+	
 }
 
 EnemyAttackBox::EnemyAttackBox(std::shared_ptr<Enemy>enemy)
@@ -123,7 +155,7 @@ EnemyAttackSphere::EnemyAttackSphere(std::shared_ptr<Object>enemy, VECTOR pos, V
 	m_velocity(velocity)
 {
 	
-	if (moveNum == 0)
+	//if (moveNum == 0)
 	{
 		m_moveUpdate = &EnemyAttackSphere::StraightUpdate;
 	}
@@ -145,7 +177,7 @@ void EnemyAttackSphere::Update()
 
 void EnemyAttackSphere::Draw()
 {
-	DrawSphere3D(m_pos, m_radius, 10, 0xffff00, 0xff0000, false);
+	DrawSphere3D(m_pos, kSphereRadius, 10, 0xffff00, 0xff0000, false);
 }
 
 void EnemyAttackSphere::Hit()
@@ -214,7 +246,7 @@ void FightBackObj::FightBackUpdate()
 
 
 /*便利関数*/
-
+//aからbへ向かうベクトル
 VECTOR ToVec(VECTOR a, VECTOR b)
 {
 	float x = (b.x - a.x);

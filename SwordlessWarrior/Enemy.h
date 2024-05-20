@@ -30,6 +30,10 @@ public:
 
 	void SetCameraAngle(float cameraAngle);
 
+	void SetAttackDir(VECTOR targetPos);
+	VECTOR GetMyPos();
+
+
 	std::list<std::shared_ptr<EnemyAttackSphere>> GetAttackObj() { return m_sphere; }
 
 	//メンバ関数ポインタ
@@ -53,11 +57,15 @@ private:
 	/// </summary>
 	void AttackSphereUpdate();
 private:
+	int m_Hp;
+
 	int m_attackCoolDownCount;
 
 	float m_radius=0;
 
 	int m_modelHandle = 0;
+
+	int m_createFrameCount = 0;
 
 	VECTOR m_velocity;
 	VECTOR m_attackDir;

@@ -104,7 +104,7 @@ public:
 	/// <returns>’·‚³</returns>
 	float Length() const
 	{
-		return sqrtf(SqLength());
+		return sqrt(SqLength());
 	}
 
 	/// <summary>

@@ -18,8 +18,12 @@ void Shadow::SetLight()
 	m_lightDir.z = 1;
 	m_lightDir.y = -1.0f;
 
+	SetUseLighting(true);
+
 	// ライトの方向を設定
 	SetLightDirection(m_lightDir);
+
+	SetLightDifColor(GetColorF(1.0f,0.0f,0.0f,1.0f));
 
 	// シャドウマップが想定するライトの方向もセット
 	SetShadowMapLightDirection(m_shadowMapHandle, m_lightDir);

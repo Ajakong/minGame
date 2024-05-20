@@ -89,7 +89,7 @@ namespace Loader
 		BGM_Title = LoadSoundMem("BGM/title.mp3");
 
 		//2Dtextureƒnƒ“ƒhƒ‹
-		titleHandle = LoadGraph("Title/Title.png");
+		titleHandle = LoadGraph("Title/title.png");
 	}
 	void TitleDelete()
 	{

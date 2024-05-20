@@ -42,10 +42,11 @@ Player::Player(int modelhandle) :
 {
 	MV1SetPosition(m_modelHandle, VGet(0, 0, 0));
 	m_anim_nutral = Loader::GetAnimationIdle();
+	m_attach_nutral=MV1AttachAnim(m_modelHandle,0,m_anim_nutral),
 	m_anim_move = Loader::GetAnimationRun();
 	m_anim_hit = Loader::GetAnimationHit();
-	m_attach_move = MV1AttachAnim(m_modelHandle, 0, m_anim_move);
-	m_attach_hit = MV1AttachAnim(m_modelHandle, 0, m_anim_hit);
+	m_attach_move = MV1AttachAnim(m_modelHandle, 1, m_anim_move);
+	m_attach_hit = MV1AttachAnim(m_modelHandle, 2, m_anim_hit);
 }
 
 Player::~Player()
@@ -122,13 +123,13 @@ void Player::IdleUpdate()
 	MV1SetMatrix(m_modelHandle, scaleMtx);
 
 	MV1SetPosition(m_modelHandle, m_pos);
-	m_playerRotateY = atan2f((float)m_velocity.x,(float)m_velocity.z);
+	m_playerRotateY = atan2((float)m_velocity.x,(float)m_velocity.z);
 	MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
 
 	CollisonSetRadius(m_radius);
 	CollisionSetPos(m_pos);
 
-	UpdateAnim(m_anim_nutral);
+	UpdateAnim(m_attach_nutral);
 }
 
 void Player::WalkingUpdate()
@@ -152,9 +153,9 @@ void Player::WalkingUpdate()
 	m_velocity.x = stickInput.x;
 	m_velocity.z = stickInput.y;//è„ì¸óÕÇ≈âúÇ…à⁄ìÆ
 	
-	m_playerRotateY = -atan2f((float)m_velocity.z, (float)m_velocity.x )-DX_PI_F/2;
+	m_playerRotateY = -atan2((float)m_velocity.z, (float)m_velocity.x )-DX_PI_F/2;
 
-	float total = MV1GetAttachAnimTotalTime(m_modelHandle,m_attach_move);
+	//float total = MV1GetAttachAnimTotalTime(m_modelHandle,m_attach_move);
 	
 	UpdateAnim(m_anim_move);
 
@@ -168,10 +169,8 @@ void Player::WalkingUpdate()
 	MATRIX modelMtx = MMult(scaleMtx, moveMtx);
 	MV1SetMatrix(m_modelHandle, scaleMtx);
 
-	CollisonSetRadius(m_radius);
-	CollisionSetPos(m_pos);
-
 	
+	CollisonSetRadius(m_radius);
 }
 
 void Player::JumpingUpdate()
