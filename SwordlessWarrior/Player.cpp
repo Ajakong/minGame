@@ -157,7 +157,7 @@ void Player::WalkingUpdate()
 
 	//float total = MV1GetAttachAnimTotalTime(m_modelHandle,m_attach_move);
 	
-	UpdateAnim(m_anim_move);
+	UpdateAnim(m_attach_move);
 
 	//モデルのサイズ調整S
 	MATRIX scaleMtx = MGetScale(VGet(0.2f, 0.2f, 0.2f));//XYZそれぞれ1/5スケール
@@ -168,7 +168,10 @@ void Player::WalkingUpdate()
 	MATRIX moveMtx = MGetTranslate(VGet(m_velocity.x,m_velocity.y,m_velocity.z));
 	MATRIX modelMtx = MMult(scaleMtx, moveMtx);
 	MV1SetMatrix(m_modelHandle, scaleMtx);
+	
+	VAdd(m_pos, m_velocity);
 
+	MV1SetPosition(m_modelHandle,m_pos);
 	
 	CollisonSetRadius(m_radius);
 }
