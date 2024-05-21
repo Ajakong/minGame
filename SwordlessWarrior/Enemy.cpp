@@ -24,7 +24,8 @@ Enemy::Enemy(int modelhandle,std::shared_ptr<Object> obj):
 	m_attackCoolDownCount(0),
 	m_attackDir(VGet(1.0f,0.0f,0.0f))
 {
-	MV1SetPosition(m_modelHandle, VGet(0, 0, 200));
+	m_pos = VGet(0, 0, 200);
+	MV1SetPosition(m_modelHandle,m_pos );
 	CollisonSetRadius(m_radius);
 	CollisionSetPos(m_pos);
 }
@@ -119,7 +120,7 @@ void Enemy::AttackSphereUpdate()
 		sphere->Update();
 		if (CheckCameraViewClip(sphere->GetPos()) != 0)
 		{
-			m_sphere.pop_front();
+			sphere.reset();
 		}
 	}
 
@@ -258,6 +259,6 @@ VECTOR ToVec(VECTOR a, VECTOR b)
 VECTOR norm(VECTOR a)
 {
 	float num = (a.x * a.x) + (a.y * a.y) + (a.z * a.z);
-	return VGet(a.x / num, a.y / num, a.z / num);
+	return VGet(a.x * 100 / num, a.y * 100 / num, a.z * 100 / num);
 }
 

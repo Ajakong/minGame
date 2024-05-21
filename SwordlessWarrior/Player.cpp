@@ -24,7 +24,7 @@ namespace
 	constexpr float kAnimChangeRateSpeed = 1.0f / kAnimChangeFrame;
 
 	//アナログスティックによる移動関連
-	constexpr float kMaxSpeed = 0.05f;//プレイヤーの最大速度
+	constexpr float kMaxSpeed = 0.5f;//プレイヤーの最大速度
 	constexpr float kAnalogRangeMin = 0.1f;//アナログスティックの入力判定範囲
 	constexpr float kAnalogRangeMax = 0.8f;
 	constexpr float kAnalogInputMax = 1000.0f;//アナログスティックから入力されるベクトルの最大値
@@ -40,7 +40,8 @@ Player::Player(int modelhandle) :
 	m_cameraAngle(0),
 	m_Hp(50)
 {
-	MV1SetPosition(m_modelHandle, VGet(0, 0, 0));
+	m_pos = VGet(0, 0, 0);
+	MV1SetPosition(m_modelHandle, m_pos);
 	m_anim_nutral = Loader::GetAnimationIdle();
 	m_attach_nutral=MV1AttachAnim(m_modelHandle,0,m_anim_nutral),
 	m_anim_move = Loader::GetAnimationRun();
@@ -134,43 +135,68 @@ void Player::IdleUpdate()
 
 void Player::WalkingUpdate()
 {
-	int m_inputX = 0;
-	int m_inputY = 0;
-	GetJoypadAnalogInput(&m_inputX, &m_inputY, DX_INPUT_PAD1);
-
-	Vec2 stickInput((float)m_inputX, -(float)m_inputY);
-	
-	stickInput.Normalize();
-
-	if (Pad::IsTrigger(PAD_INPUT_1))
-	{
-		ChangeAnim(m_anim_jump);
-		m_velocity.y += 50;
-		m_playerUpdate = &Player::JumpingUpdate;
-	}
-
-	//ベクトル調整
-	m_velocity.x = stickInput.x;
-	m_velocity.z = stickInput.y;//上入力で奥に移動
-	
-	m_playerRotateY = -atan2((float)m_velocity.z, (float)m_velocity.x )-DX_PI_F/2;
-
-	//float total = MV1GetAttachAnimTotalTime(m_modelHandle,m_attach_move);
-	
 	UpdateAnim(m_attach_move);
 
-	//モデルのサイズ調整S
-	MATRIX scaleMtx = MGetScale(VGet(0.2f, 0.2f, 0.2f));//XYZそれぞれ1/5スケール
-	//角度R
-	MATRIX mtx = MGetRotY(-m_cameraAngle - DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
-	m_velocity = VTransform(m_velocity, mtx);
-	//移動T
-	MATRIX moveMtx = MGetTranslate(VGet(m_velocity.x,m_velocity.y,m_velocity.z));
-	MATRIX modelMtx = MMult(scaleMtx, moveMtx);
-	MV1SetMatrix(m_modelHandle, scaleMtx);
-	
-	VAdd(m_pos, m_velocity);
+	int pad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
+	if (pad & PAD_INPUT_1)
+	{
+		//待機アニメーションを削除してやる必要がある
+		//MV1DetachAnim(m_modelHandle, m_currentAnimNo);
+		//m_isAttack = true;
+		//m_currentAnimNo = MV1AttachAnim(m_modelHandle, kAttackAnimIndex, -1, false);
 
+
+		
+
+		ChangeAnim(kAttackAnimIndex);
+	}
+	else
+	{
+		//アナログスティックを使って移動
+
+		int analogX = 0, analogY = 0;
+
+		GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+
+		//アナログスティックの入力10%~80%を使用する
+		//ベクトルの長さが最大1000になる
+
+		//プレイヤーの最大移動速度は0.01f/frame
+
+		//ベクトルの長さを取得
+		VECTOR move = VGet(analogX, 0, -analogY);
+
+		float len = VSize(move);
+		//ベクトルの長さを0.0~1.0の割合に変換する
+		float rate = len / kAnalogInputMax;
+
+		//アナログスティック無効な範囲を除外する
+		rate = (rate - kAnalogRangeMin / (kAnalogRangeMax - kAnalogRangeMin));
+		rate = min(rate, 1.0f);
+		rate = max(rate, 0.0f);
+
+		//速度が決定できるので移動ベクトルに反映
+		move = VNorm(move);
+		float speed = kMaxSpeed * rate;
+
+		move = VScale(move, speed);
+
+		//カメラのいる角度から
+		//コントローラーによる移動方向を決定する
+		MATRIX mtx = MGetRotY(-m_cameraAngle - DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
+		move = VTransform(move, mtx);
+
+		//移動方向からプレイヤーの向く方向を決定する
+		//移動していない場合(ゼロベクトル)の場合は変更しない
+		if (VSquareSize(move) > 0.0f)
+		{
+			m_cameraAngle = -atan2f(move.z, move.x) - DX_PI_F / 2;
+		}
+
+		MV1SetRotationXYZ(m_modelHandle, VGet(0.0f, m_cameraAngle, 0.0f));
+
+		m_pos = VAdd(m_pos, move);
+	}
 	MV1SetPosition(m_modelHandle,m_pos);
 	
 	CollisonSetRadius(m_radius);

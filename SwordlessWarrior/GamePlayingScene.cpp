@@ -32,6 +32,8 @@ GamePlayingScene::GamePlayingScene(SceneManager& manager) :
 	Loader::GameOverSceneLoad();
 
 	PlaySoundMem(m_stageBgm, DX_PLAYTYPE_LOOP);
+
+	m_gameManager->Init();
 }
 
 GamePlayingScene::~GamePlayingScene()
