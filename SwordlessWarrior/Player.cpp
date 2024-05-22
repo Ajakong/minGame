@@ -145,9 +145,6 @@ void Player::WalkingUpdate()
 		//m_isAttack = true;
 		//m_currentAnimNo = MV1AttachAnim(m_modelHandle, kAttackAnimIndex, -1, false);
 
-
-		
-
 		ChangeAnim(kAttackAnimIndex);
 	}
 	else

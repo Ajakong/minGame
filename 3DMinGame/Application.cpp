@@ -108,15 +108,8 @@ void Application::Run()
                 ChangeWindowMode(true);
             }
 
-
-
-
-
             sceneManager.Update();
             sceneManager.Draw();
-
-
-
 
             ScreenFlip();
 

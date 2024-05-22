@@ -17,7 +17,7 @@ void Physic::Update()
 	{
 		for (const auto& obj2 : data::object)
 		{
-			if (obj1 == obj2)return;
+			if (obj1.first == obj2.first)continue;
 			//‹…1,2‚Ì’†S‚Ì‹——£‚ð‹‚ß‚é
 			float DisX= obj1.second->GetSphereCol()->GetPos().x + obj2.second->GetSphereCol()->GetPos().x;
 			float DisY= obj1.second->GetSphereCol()->GetPos().y + obj2.second->GetSphereCol()->GetPos().y;
