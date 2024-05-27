@@ -24,6 +24,7 @@ public:
 
 	std::shared_ptr<SphereCollision> GetSphereCol() { return m_SphereCol; }
 
+
 protected:
 	
 	VECTOR m_pos;

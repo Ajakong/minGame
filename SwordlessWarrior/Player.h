@@ -47,6 +47,9 @@ private:
 private:
 	int m_Hp;
 	int m_modelHandle = 0;
+
+	int rotRad = 0;
+
 	float m_radius = 0;
 
 	VECTOR m_velocity;

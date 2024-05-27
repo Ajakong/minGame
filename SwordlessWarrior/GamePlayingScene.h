@@ -41,6 +41,9 @@ private:
 
     bool m_isClear = false;
 
+
+    
+
     std::shared_ptr<GameManager> m_gameManager;
 
     // メンバ関数ポインタの宣言

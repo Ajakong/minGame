@@ -56,9 +56,11 @@ void GamePlayingScene::Draw()
 	(this->*m_drawFunc)();
 
 	if (m_isTitle) {
+		Loader::TitleLoad();
 		ChangeScene(std::make_shared<TitleScene>(m_manager));
 	}
 	else if (m_isContinue) {
+
 		ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
 	}
 	else if (m_isGameOver) {
@@ -109,6 +111,7 @@ void GamePlayingScene::ChangeScene(std::shared_ptr<Scene> nextScene)
 {
 	StopSoundMem(m_stageBgm);
 	m_manager.ChangeScene(nextScene);
+	Loader::GameSceneDelete();
 }
 
 void GamePlayingScene::FadeDraw()

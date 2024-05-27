@@ -67,6 +67,10 @@ private:
 
 	int m_createFrameCount = 0;
 
+	float m_centerToEnemyAngle;
+
+	int m_sphereNum = 0;
+
 	VECTOR m_velocity;
 	VECTOR m_attackDir;
 
@@ -121,9 +125,7 @@ private:
 
 private:
 	
-
 	float m_radius = 0;
-
 
 	VECTOR m_velocity;
 	std::shared_ptr<Enemy>m_enemy;

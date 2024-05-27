@@ -40,8 +40,10 @@ Player::Player(int modelhandle) :
 	m_cameraAngle(0),
 	m_Hp(50)
 {
-	m_pos = VGet(0, 0, 0);
-	MV1SetPosition(m_modelHandle, m_pos);
+	MATRIX mtx = MGetRotY(-m_cameraAngle - DX_PI_F / 2);
+	MATRIX scaleMtx = MGetScale(VGet(0.3f, 0.3f, 0.3f));//XYZそれぞれ1/5スケール
+	mtx = MMult(mtx, scaleMtx);
+	MV1SetMatrix(m_modelHandle, mtx);
 	m_anim_nutral = Loader::GetAnimationIdle();
 	m_attach_nutral=MV1AttachAnim(m_modelHandle,0,m_anim_nutral),
 	m_anim_move = Loader::GetAnimationRun();
@@ -64,7 +66,7 @@ void Player::Update()
 {
 
 	(this->*m_playerUpdate)();
-
+	Pad::Update();
 }
 
 void Player::Draw()
@@ -107,26 +109,34 @@ void Player::IdleUpdate()
 	int m_inputY = 0;
 	GetJoypadAnalogInput(&m_inputX, &m_inputY, DX_INPUT_PAD1);
 	Vec2 stickInput((float)m_inputX, -(float)m_inputY);
-	if (stickInput.Length() >= 1)
+	/*if (stickInput.Length() >= 1)
 	{
 		ChangeAnim(m_anim_move);
 		m_playerUpdate = &Player::WalkingUpdate;
-	}
+	}*/
 
-	if (Pad::IsTrigger(PAD_INPUT_1))
-	{
-		ChangeAnim(m_anim_jump);
-		m_velocity.y += 50;
-		m_playerUpdate = &Player::JumpingUpdate;
-	}
+	//if (Pad::IsTrigger(PAD_INPUT_1))
+	//{
+	//	ChangeAnim(m_anim_jump);
+	//	m_velocity.y += 50;
+	//	m_playerUpdate = &Player::JumpingUpdate;
+	//}
 
+
+	MATRIX Mtx = MGetTranslate(VGet(1, 0, 0));
 	MATRIX scaleMtx = MGetScale(VGet(0.3f, 0.3f, 0.3f));//XYZそれぞれ1/5スケール
-	MV1SetMatrix(m_modelHandle, scaleMtx);
+	Mtx = MMult(Mtx, scaleMtx);
+	m_playerRotateY = atan2((float)m_velocity.x, (float)m_velocity.z);
 
-	MV1SetPosition(m_modelHandle, m_pos);
-	m_playerRotateY = atan2((float)m_velocity.x,(float)m_velocity.z);
-	MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
+	MATRIX rotateMtx = MGetRotAxis(m_velocity, m_playerRotateY);
+	Mtx = MMult(Mtx, rotateMtx);
+	
+	MV1SetMatrix(m_modelHandle, Mtx);
+	
+	
+	//MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
 
+	
 	CollisonSetRadius(m_radius);
 	CollisionSetPos(m_pos);
 
@@ -161,7 +171,7 @@ void Player::WalkingUpdate()
 		//プレイヤーの最大移動速度は0.01f/frame
 
 		//ベクトルの長さを取得
-		VECTOR move = VGet(analogX, 0, -analogY);
+		VECTOR move = VGet(static_cast<float>(analogX), 0.0f, static_cast<float>(-analogY));
 
 		float len = VSize(move);
 		//ベクトルの長さを0.0~1.0の割合に変換する
@@ -194,9 +204,10 @@ void Player::WalkingUpdate()
 
 		m_pos = VAdd(m_pos, move);
 	}
-	MV1SetPosition(m_modelHandle,m_pos);
 	
 	CollisonSetRadius(m_radius);
+	
+
 }
 
 void Player::JumpingUpdate()

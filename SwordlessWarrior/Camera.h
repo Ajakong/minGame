@@ -26,4 +26,6 @@ private:
 
 	float cameraAngle = -DX_PI_F / 2;
 	VECTOR velocity = VGet(0,0,0);
+
+	
 };

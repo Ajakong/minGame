@@ -7,7 +7,7 @@ SkyDome::SkyDome():
 	m_model(Loader::GetSkyDomeHandle())
 {
 	MV1SetPosition(m_model, VGet(0, 0, 0));
-	MATRIX scaleMtx = MGetScale(VGet(50.0f, 50.0f, 5.0f));//XYZそれぞれ1/5スケール
+	MATRIX scaleMtx = MGetScale(VGet(30.0f, 30.0f, 5.0f));//XYZそれぞれ1/5スケール
 	MV1SetMatrix(m_model, scaleMtx);
 
 }

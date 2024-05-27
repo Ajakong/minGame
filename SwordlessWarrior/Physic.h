@@ -18,6 +18,6 @@ public:
 
 	void Exit( const char* NameTag);
 
-
+	bool JudgeColision(std::shared_ptr<Object> ob1, std::shared_ptr<Object> obj2);
 };
 

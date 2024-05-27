@@ -81,13 +81,14 @@ void GameOverScene::FadeOutUpdate()
 
 		if (m_selectNumber % 2 == 0)
 		{
-
+			Loader::GameSceneLoad();
 			m_manager.ChangeScene(std::make_shared<GamePlayingScene>(m_manager));
 
 		}
 		if (m_selectNumber % 2 == 1)
 		{
 			Loader::GameOverSceneDelete();
+			Loader::TitleLoad();
 			m_manager.ChangeScene(std::make_shared<TitleScene>(m_manager));
 
 		}

@@ -8,6 +8,7 @@ class SceneMain;
 
 class Camera;
 class SkyDome;
+class Shadow;
 
 class TitleScene : public Scene
 {
@@ -49,6 +50,7 @@ private:
 
     std::shared_ptr<Camera> m_camera;
     std::shared_ptr<SkyDome>m_skyDome;
+    std::shared_ptr<Shadow>m_shadow;
 
     // メンバ関数ポインタの宣言
     using UpdateFunc_t = void(TitleScene::*)();

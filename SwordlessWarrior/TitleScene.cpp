@@ -2,6 +2,7 @@
 #include <cassert>
 #include"Camera.h"
 #include"SkyDome.h"
+#include"Shadow.h"
 #include "Application.h"
 #include "SceneManager.h"
 #include "TitleScene.h"
@@ -28,6 +29,7 @@ TitleScene::TitleScene(SceneManager& manager) :
 	m_stageBgm(Loader::GetBGM_title()),
 	m_camera(std::make_shared<Camera>()),
 	m_skyDome(std::make_shared<SkyDome>()),
+	m_shadow(std::make_shared<Shadow>()),
 	m_frame(60)
 {
 	PlaySoundMem(m_stageBgm, DX_PLAYTYPE_LOOP);
@@ -41,6 +43,7 @@ TitleScene::TitleScene(SceneManager& manager) :
 	SetFogEnable(TRUE);					// フォグを有効にする
 	SetFogColor(200, 120, 0);			// フォグの色にする
 	SetFogStartEnd(10.0f, 4000.0f);	// フォグの開始距離
+	m_shadow->SetLight();
 }
 
 TitleScene::~TitleScene()
@@ -73,6 +76,10 @@ void TitleScene::FadeInUpdate()
 {
 
 	m_fps = GetFPS();
+
+	m_shadow->Draw();
+	m_shadow->DrawEnd();
+	
 
 	if (!CheckHandleASyncLoad(m_modelHandle))
 	{
@@ -198,10 +205,44 @@ void TitleScene::FadeDraw()
 	SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
 	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	m_shadow->UseShadowMap();
+	
+
+	DrawFormatString(0, 0, 0xffffff, "TitleScene");
+
+	m_skyDome->Draw();
+
+	MV1DrawModel(m_modelHandle);
+
+	DrawRotaGraph(1200, 200, 1, 0, m_titleHandle, true);
+
+	//DrawString(10, 100, "TitleScene", 0xffffff);
+	DrawFormatString(730, 650, 0xffffff, "Push Z to Start");
+
+	SetDrawBlendMode(DX_BLENDMODE_MULA, alpha);
+	DrawBox(0, 0, Game::kScreenWidth, Game::kScreenHeight, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	m_shadow->Fin();
 }
 
 void TitleScene::NormalDraw()
 {
+	DrawFormatString(0, 0, 0xffffff, "TitleScene");
+
+	m_skyDome->Draw();
+
+	MV1DrawModel(m_modelHandle);
+
+	DrawRotaGraph(1200, 200, 1, 0, m_titleHandle, true);
+
+	//DrawString(10, 100, "TitleScene", 0xffffff);
+	DrawFormatString(730, 650, 0xffffff, "Push Z to Start");
+
+	m_shadow->UseShadowMap();
+
+
 	DrawFormatString(0, 0, 0xffffff, "TitleScene");
 
 	m_skyDome->Draw();
@@ -212,4 +253,6 @@ void TitleScene::NormalDraw()
 
 	//DrawString(10, 100, "TitleScene", 0xffffff);
 	DrawFormatString(730, 650, 0xffffff, "Push Z to Start");
+
+	m_shadow->Fin();
 }

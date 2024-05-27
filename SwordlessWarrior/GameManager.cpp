@@ -8,7 +8,7 @@
 #include"Enemy.h"
 #include"SkyDome.h"
 #include"Camera.h"
-#include"Pad.h"
+
 
 namespace nameTag
 {
@@ -48,7 +48,7 @@ void GameManager::Init()
 	pEnemy->SetAttackDir(pPlayer->GetPos());
 
 	SetFogEnable(TRUE);					// フォグを有効にする
-	SetFogColor(100.0f, 0.0f, 0.0f);			// フォグの色にする
+	SetFogColor(100, 0, 0);			// フォグの色にする
 	SetFogStartEnd(0.0f, 3000.0f);	// フォグの開始距離
 }
 
@@ -75,7 +75,7 @@ void GameManager::Update()
 	{
 		m_isGameOverFlag = true;
 	}
-	Pad::Update();
+	
 }
 
 void GameManager::Draw()

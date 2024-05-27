@@ -7,7 +7,7 @@ namespace
 
 	constexpr float kFightBackObjRadius = 10;
 
-	constexpr int kAttackCoolDownTime = 300;
+	constexpr int kAttackCoolDownTime = 60;
 
 }
 
@@ -18,13 +18,14 @@ VECTOR norm(VECTOR a);
 Enemy::Enemy(int modelhandle,std::shared_ptr<Object> obj):
 	m_obj(obj),
 	m_modelHandle(MV1DuplicateModel(modelhandle)),
-	m_enemyUpdate(&Enemy::AttackSphereUpdate),
+	m_enemyUpdate(&Enemy::IdleUpdate),
 	m_Hp(50),
 	m_radius(kSphereRadius),
 	m_attackCoolDownCount(0),
-	m_attackDir(VGet(1.0f,0.0f,0.0f))
+	m_attackDir(VGet(1.0f,0.0f,0.0f)),
+	m_centerToEnemyAngle(0)
 {
-	m_pos = VGet(0, 0, 200);
+	m_pos = VGet(200, 0, 0);
 	MV1SetPosition(m_modelHandle,m_pos );
 	CollisonSetRadius(m_radius);
 	CollisionSetPos(m_pos);
@@ -83,9 +84,27 @@ void Enemy::StartUpdate()
 
 void Enemy::IdleUpdate()
 {
+	
 	//モデルのサイズ調整S
 	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/5スケール
-	MV1SetMatrix(m_modelHandle, scaleMtx);
+	
+	float Angle = atan2(-m_pos.z, -m_pos.x);
+	m_centerToEnemyAngle += 1.0f;
+
+	float Length = sqrt(m_pos.x * m_pos.x + m_pos.z * m_pos.z);
+
+	m_pos.x = Length * cos(m_centerToEnemyAngle *DX_PI_F / 180.0);
+	m_pos.z = Length * sin(m_centerToEnemyAngle * DX_PI_F / 180.0);
+	
+	
+	MATRIX transMtx = MGetTranslate(VGet(m_pos.x, m_pos.y, m_pos.z));
+	MATRIX rotateMtx = MGetRotY(Angle);
+	MATRIX Mtx = MMult(scaleMtx, rotateMtx);
+	Mtx = MMult(MtxMtx, transMtx);
+	
+	MV1SetMatrix(m_modelHandle, Mtx);
+
+	//MV1SetPosition(m_modelHandle, VGet(m_pos.x, m_pos.y, m_pos.z));
 
 	m_attackCoolDownCount++;
 
@@ -96,8 +115,7 @@ void Enemy::IdleUpdate()
 		m_enemyUpdate = &Enemy::AttackSphereUpdate;
 	}
 
-
-
+	
 }
 
 void Enemy::OnDamageUpdate()
@@ -110,9 +128,17 @@ void Enemy::AttackSphereUpdate()
 	m_createFrameCount++;
 	if (m_createFrameCount > kSphereCreateFrame)
 	{
-		m_createFrameCount = 0;
-		m_sphere.push_back(std::make_shared<EnemyAttackSphere>(shared_from_this(), GetMyPos(), m_attackDir, 1));
+		m_sphereNum++;
+		if (m_sphereNum <= 5)
+		{
+			m_createFrameCount = 0;
+			m_sphere.push_back(std::make_shared<EnemyAttackSphere>(shared_from_this(), GetMyPos(), m_attackDir, 1));
 
+		}	
+		else
+		{
+			m_enemyUpdate = &Enemy::IdleUpdate;
+		}
 	}
 	
 	for (auto& sphere : m_sphere)
@@ -120,12 +146,10 @@ void Enemy::AttackSphereUpdate()
 		sphere->Update();
 		if (CheckCameraViewClip(sphere->GetPos()) != 0)
 		{
+			m_sphereNum--;
 			sphere.reset();
 		}
 	}
-
-
-	
 }
 
 EnemyAttackBox::EnemyAttackBox(std::shared_ptr<Enemy>enemy)

@@ -9,6 +9,7 @@
 
 #include"WorldTimer.h"
 #include"Loader.h"
+#include"Pad.h"
 
 namespace
 {
@@ -102,7 +103,11 @@ void Application::Run()
 
         LONGLONG time;
 
+        bool stop = false;
+        bool addFrame = false;//ƒRƒ}‘—‚èˆ—
+        int FrameCount = 0;
 
+        
 
         while (ProcessMessage() != -1)
         {
@@ -117,15 +122,39 @@ void Application::Run()
 
 
 
+            if (!stop)
+            {
+                
+                FrameCount++;
+                sceneManager.Update();
+                if (Pad::IsTrigger(PAD_INPUT_8))
+                {
+                    stop = true;
+                }
+                if (addFrame)
+                {
+                    addFrame = false;
+                    stop = true;
+                }
+            }
+            else
+            {
 
+                if (Pad::IsTrigger(PAD_INPUT_8))
+                {
+                    stop = false;
+                }
+                if (Pad::IsTrigger(PAD_INPUT_12))
+                {
+                    addFrame = true;
+                    stop = false;
+                }
+            }
 
-            sceneManager.Update();
             sceneManager.Draw();
 
-
-
-
             ScreenFlip();
+           
 
             // 60FPS‚ÉŒÅ’è
             while (16667 > GetNowHiPerformanceCount() - time) {};

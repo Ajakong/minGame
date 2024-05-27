@@ -8,15 +8,21 @@ namespace
 {
 	constexpr float kCameraDist = 96;
 	constexpr float kCameraHeight = 32;
+
+	constexpr float kCameraNear = 1.0f;
+	constexpr float kCameraFar = 1000.0f;
+
+	//constexpr VECTOR kFirstPos=VGet(300, 300, -200);
+
+	constexpr float kCameraFOV = 60.0f;
 }
 
 Camera::Camera()
 {
-	//‰œs0.1`1000‚Ü‚Å‚ğƒJƒƒ‰‚Ì•`‰æ”ÍˆÍ‚Æ‚·‚é
-	SetCameraNearFar(0.1f, 2000.0f);
+	SetCameraNearFar(kCameraNear, kCameraFar);//•`‰æ‚·‚é•K—v‚ª‚ ‚éêŠ‚Ü‚Å‹——£‚ª‚ ‚é‚Ì‚Å0.1‚È‚Ç–³‘Ê‚É’·‚­‚µ‚È‚¢
 
 	// FOV(‹–ìŠp)‚ğ60“x‚É
-	SetupCamera_Perspective(60.0f * (static_cast<float>(DX_PI_F) / 180.0f));
+	SetupCamera_Perspective(kCameraFOV * (static_cast<float>(DX_PI_F) / 180.0f));
 
 	pos = VGet(-300, 300, -200);
 }

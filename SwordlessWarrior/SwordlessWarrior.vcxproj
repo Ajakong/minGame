@@ -178,6 +178,7 @@
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="GamePlayingScene.h" />
     <ClInclude Include="Loader.h" />
+    <ClInclude Include="MyDxLib.h" />
     <ClInclude Include="NameTag.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pad.h" />
