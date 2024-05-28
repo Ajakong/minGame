@@ -11,8 +11,10 @@ namespace Loader
 	//3Danimationハンドル
 	int GetAnimationIdle();
 	int GetAnimationSitting();
+	int GetAnimationJump();
 	int GetAnimationRun();
 	int GetAnimationHit();
+	int GetAnimationFalling();
 
 	//Soundハンドル
 	int GetBGM_title();

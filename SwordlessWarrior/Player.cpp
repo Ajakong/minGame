@@ -228,7 +228,6 @@ void Player::JumpingUpdate()
 void Player::OnDamageUpdate()
 {
 	UpdateAnim(m_attach_hit);
-	
 }
 
 bool Player::UpdateAnim(int attachNo)

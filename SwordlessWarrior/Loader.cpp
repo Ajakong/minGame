@@ -13,8 +13,10 @@ namespace
 	//3Danimationハンドル
 	int anim_idle = -1;
 	int anim_sitting = -1;
+	int anim_jump = -1;
 	int anim_run = -1;
 	int anim_hit = -1;
+	int anim_falling = -1;
 
 	//Soundハンドル
 	int BGM_Title = -1;
@@ -52,6 +54,10 @@ namespace Loader
 	{
 		return anim_sitting;
 	}
+	int GetAnimationJump()
+	{
+		return anim_jump;
+	}
 	int GetAnimationRun()
 	{
 		return anim_run;
@@ -59,6 +65,10 @@ namespace Loader
 	int GetAnimationHit()
 	{
 		return anim_hit;
+	}
+	int GetAnimationFalling()
+	{
+		return anim_falling;
 	}
 	int GetBGM_title()
 	{
@@ -112,6 +122,8 @@ namespace Loader
 		anim_run = MV1LoadModel("Player/Run.mv1");
 		anim_hit = MV1LoadModel("Player/Hit.mv1");
 		anim_idle= MV1LoadModel("Player/Idle.mv1");
+		anim_falling = MV1LoadModel("Enemy/Falling.mv1");
+		anim_jump = MV1LoadModel("Enemy/Jump.mv1");
 
 		//Soundハンドル
 		BGM_Battle = LoadSoundMem("BGM/battle.mp3");
@@ -127,6 +139,8 @@ namespace Loader
 		MV1DeleteModel(anim_run);
 		MV1DeleteModel(anim_hit);
 		MV1DeleteModel(anim_idle);
+		MV1DeleteModel(anim_falling);
+		MV1DeleteModel(anim_jump);
 
 		//Soundハンドル
 		DeleteSoundMem(BGM_Battle);

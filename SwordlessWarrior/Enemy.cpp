@@ -18,6 +18,7 @@ VECTOR norm(VECTOR a);
 Enemy::Enemy(int modelhandle,std::shared_ptr<Object> obj):
 	m_obj(obj),
 	m_modelHandle(MV1DuplicateModel(modelhandle)),
+	m_anim_nutral(Loader::GetAnimationFalling()),
 	m_enemyUpdate(&Enemy::IdleUpdate),
 	m_Hp(50),
 	m_radius(kSphereRadius),
@@ -43,6 +44,16 @@ void Enemy::Init()
 void Enemy::Update()
 {
 	(this->*m_enemyUpdate)();
+
+	for (auto& sphere : m_sphere)
+	{
+		sphere->Update();
+		if (CheckCameraViewClip(sphere->GetPos()) != 0)
+		{
+			m_sphereNum--;
+			sphere.reset();
+		}
+	}
 }
 
 void Enemy::Draw()
@@ -93,14 +104,14 @@ void Enemy::IdleUpdate()
 
 	float Length = sqrt(m_pos.x * m_pos.x + m_pos.z * m_pos.z);
 
-	m_pos.x = Length * cos(m_centerToEnemyAngle *DX_PI_F / 180.0);
-	m_pos.z = Length * sin(m_centerToEnemyAngle * DX_PI_F / 180.0);
+	m_pos.x = Length * static_cast<float>(cos(m_centerToEnemyAngle *DX_PI_F / 180.0));
+	m_pos.z = Length * static_cast<float>(sin(m_centerToEnemyAngle * DX_PI_F / 180.0));
 	
 	
 	MATRIX transMtx = MGetTranslate(VGet(m_pos.x, m_pos.y, m_pos.z));
-	MATRIX rotateMtx = MGetRotY(Angle);
+	MATRIX rotateMtx = MGetRotY(-Angle);
 	MATRIX Mtx = MMult(scaleMtx, rotateMtx);
-	Mtx = MMult(MtxMtx, transMtx);
+	Mtx = MMult(Mtx, transMtx);
 	
 	MV1SetMatrix(m_modelHandle, Mtx);
 
@@ -141,15 +152,7 @@ void Enemy::AttackSphereUpdate()
 		}
 	}
 	
-	for (auto& sphere : m_sphere)
-	{
-		sphere->Update();
-		if (CheckCameraViewClip(sphere->GetPos()) != 0)
-		{
-			m_sphereNum--;
-			sphere.reset();
-		}
-	}
+	
 }
 
 EnemyAttackBox::EnemyAttackBox(std::shared_ptr<Enemy>enemy)
