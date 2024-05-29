@@ -51,7 +51,7 @@ void Enemy::Update()
 		if (CheckCameraViewClip(sphere->GetPos()) != 0)
 		{
 			m_sphereNum--;
-			sphere.reset();
+			m_sphere.remove(sphere);
 		}
 	}
 }
@@ -60,8 +60,10 @@ void Enemy::Draw()
 {
 	MV1DrawModel(m_modelHandle);
 
-	for (auto& sphere : m_sphere)sphere->Draw();
-
+	for (auto& sphere : m_sphere)
+	{
+		sphere->Draw();
+	}
 }
 
 void Enemy::WantToPlayer(VECTOR cameraToPlayer)
@@ -98,8 +100,9 @@ void Enemy::IdleUpdate()
 	
 	//モデルのサイズ調整S
 	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/5スケール
-	
-	float Angle = atan2(-m_pos.z, -m_pos.x);
+	m_attackDir = norm(ToVec(m_pos, m_obj->GetPos()));//オブジェクトに向かうベクトルを正規化したもの
+
+	float Angle =-90-atan2(m_attackDir.z,m_attackDir.x );
 	m_centerToEnemyAngle += 1.0f;
 
 	float Length = sqrt(m_pos.x * m_pos.x + m_pos.z * m_pos.z);
@@ -109,7 +112,7 @@ void Enemy::IdleUpdate()
 	
 	
 	MATRIX transMtx = MGetTranslate(VGet(m_pos.x, m_pos.y, m_pos.z));
-	MATRIX rotateMtx = MGetRotY(-Angle);
+	MATRIX rotateMtx = MGetRotY(Angle);
 	MATRIX Mtx = MMult(scaleMtx, rotateMtx);
 	Mtx = MMult(Mtx, transMtx);
 	
@@ -122,7 +125,6 @@ void Enemy::IdleUpdate()
 	if (m_attackCoolDownCount > kAttackCoolDownTime)
 	{
 		m_attackCoolDownCount = 0;
-		m_attackDir = norm(ToVec(m_pos, m_obj->GetPos()));//オブジェクトに向かうベクトルを正規化したもの
 		m_enemyUpdate = &Enemy::AttackSphereUpdate;
 	}
 
@@ -214,7 +216,7 @@ void EnemyAttackSphere::Hit()
 
 void EnemyAttackSphere::StraightUpdate()
 {
-	m_pos = VAdd(m_pos, m_velocity);
+	m_pos = VAdd(m_pos, VGet(m_velocity.x*20,m_velocity.y*20,m_velocity.z*20));
 
 	CollisionSetPos(m_pos);
 }

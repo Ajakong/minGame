@@ -29,18 +29,18 @@ public:
 	playerState_t m_playerUpdate;
 
 private:
-	//アニメーションの進行
-   //ループしたかどうかを返す
-	bool UpdateAnim(int attachNo);
-	//アニメーションの変更
-	void ChangeAnim(int animIndex);
+	////アニメーションの進行
+	////ループしたかどうかを返す
+	//bool UpdateAnim(int attachNo);
+	////アニメーションの変更
+	//void ChangeAnim(int animIndex);
 
-	//状態別関数(ポインタで呼び出す)
-	void StartUpdate();
-	void IdleUpdate();
-	void WalkingUpdate();
-	void JumpingUpdate();
-	void OnDamageUpdate();
+	////状態別関数(ポインタで呼び出す)
+	//void StartUpdate();
+	//void IdleUpdate();
+	//void WalkingUpdate();
+	//void JumpingUpdate();
+	//void OnDamageUpdate();
 
 	VECTOR GetCameraToPlayer()const;
 
