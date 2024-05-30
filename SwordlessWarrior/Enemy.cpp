@@ -34,6 +34,8 @@ Enemy::Enemy(int modelhandle,std::shared_ptr<Object> obj):
 
 Enemy::~Enemy()
 {
+	MV1DeleteModel(m_modelHandle);
+
 }
 
 void Enemy::Init()
@@ -47,13 +49,21 @@ void Enemy::Update()
 
 	for (auto& sphere : m_sphere)
 	{
+		if (m_sphere.size() == 0)return;
 		sphere->Update();
+		
+	}
+
+	for (auto& sphere : m_sphere)
+	{
 		if (CheckCameraViewClip(sphere->GetPos()) != 0)
 		{
+			//ここを通る際にsphereが???になってたら原因はここじゃない
 			m_sphereNum--;
 			m_sphere.remove(sphere);
 		}
 	}
+	
 }
 
 void Enemy::Draw()
@@ -97,7 +107,6 @@ void Enemy::StartUpdate()
 
 void Enemy::IdleUpdate()
 {
-	
 	//モデルのサイズ調整S
 	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/5スケール
 	m_attackDir = norm(ToVec(m_pos, m_obj->GetPos()));//オブジェクトに向かうベクトルを正規化したもの
@@ -109,7 +118,6 @@ void Enemy::IdleUpdate()
 
 	m_pos.x = Length * static_cast<float>(cos(m_centerToEnemyAngle *DX_PI_F / 180.0));
 	m_pos.z = Length * static_cast<float>(sin(m_centerToEnemyAngle * DX_PI_F / 180.0));
-	
 	
 	MATRIX transMtx = MGetTranslate(VGet(m_pos.x, m_pos.y, m_pos.z));
 	MATRIX rotateMtx = MGetRotY(Angle);
@@ -127,8 +135,6 @@ void Enemy::IdleUpdate()
 		m_attackCoolDownCount = 0;
 		m_enemyUpdate = &Enemy::AttackSphereUpdate;
 	}
-
-	
 }
 
 void Enemy::OnDamageUpdate()
@@ -146,15 +152,12 @@ void Enemy::AttackSphereUpdate()
 		{
 			m_createFrameCount = 0;
 			m_sphere.push_back(std::make_shared<EnemyAttackSphere>(shared_from_this(), GetMyPos(), m_attackDir, 1));
-
 		}	
 		else
 		{
 			m_enemyUpdate = &Enemy::IdleUpdate;
 		}
 	}
-	
-	
 }
 
 EnemyAttackBox::EnemyAttackBox(std::shared_ptr<Enemy>enemy)
@@ -259,9 +262,8 @@ void FightBackObj::Hit()
 	}
 	else
 	{
-
+		//プレイヤーが取得後にカウンター挙動
 	}
-	
 }
 
 void FightBackObj::MoveUpdate()

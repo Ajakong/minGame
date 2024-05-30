@@ -24,7 +24,11 @@ namespace
 GamePlayingScene::GamePlayingScene(SceneManager& manager) :
 	Scene(manager),
 	m_gameManager(make_shared<GameManager>()),
-	m_stageBgm(Loader::GetBGM_battle())
+	m_stageBgm(Loader::GetBGM_battle()),
+	m_isTitle(false),
+	m_isContinue(false),
+	m_isGameOver(false),
+	m_isClear(false)
 {
 	m_updateFunc = &GamePlayingScene::FadeInUpdate;
 	m_drawFunc = &GamePlayingScene::FadeDraw;

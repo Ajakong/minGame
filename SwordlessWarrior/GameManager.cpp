@@ -33,7 +33,8 @@ GameManager::GameManager():
 
 GameManager::~GameManager()
 {
-
+	pPhysic->Exit(nameTag::Player);
+	pPhysic->Exit(nameTag::Enemy);
 }
 
 void GameManager::Init()

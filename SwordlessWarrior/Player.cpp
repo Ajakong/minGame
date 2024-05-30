@@ -18,7 +18,7 @@ namespace
 	constexpr float kAnimChangeRateSpeed = 1.0f / kAnimChangeFrame;
 
 	//アナログスティックによる移動関連
-	constexpr float kMaxSpeed = 50.0f;//プレイヤーの最大速度
+	constexpr float kMaxSpeed = 2.0f;//プレイヤーの最大速度
 	constexpr float kAnalogRangeMin = 0.1f;//アナログスティックの入力判定範囲
 	constexpr float kAnalogRangeMax = 0.8f;
 	constexpr float kAnalogInputMax = 1000.0f;//アナログスティックから入力されるベクトルの最大値
@@ -37,6 +37,7 @@ Player::Player(int modelhandle) :
 
 Player::~Player()
 {
+	MV1DeleteModel(m_modelHandle);
 }
 
 void Player::Init()
@@ -55,7 +56,7 @@ void Player::Update()
 
 	//アナログスティックの入力10%~80%を使用する
 	//ベクトルの長さが最大1000になる
-
+	
 	//プレイヤーの最大移動速度は0.01f/frame
 
 	//ベクトルの長さを取得
@@ -72,9 +73,9 @@ void Player::Update()
 
 	//速度が決定できるので移動ベクトルに反映
 	move = VNorm(move);
-	/*float speed = kMaxSpeed * rate;
+	float speed = kMaxSpeed * rate;
 
-	move = VScale(move, speed);*/
+	move = VScale(move, speed);
 	m_velocity = move;
 	m_pos =VAdd(m_pos,m_velocity);
 
@@ -84,10 +85,13 @@ void Player::Update()
 	MATRIX scale = MGetScale(VGet(0.5f, 0.5f, 0.5f));
 	MATRIX rotate = MGetRotY(-m_cameraAngle - DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
 	mtx = MMult(scale, rotate);
-	/*move = VTransform(m_velocity, rotate);
+	move = VTransform(VGet(m_velocity.x+m_pos.x, m_velocity.y+m_pos.y, m_velocity.z+m_pos.z), rotate);
 	MATRIX moving = MGetTranslate(move);
 	
-	mtx = MMult(mtx, moving);*/
+	m_velocity = move;
+	m_pos = m_velocity;
+
+	mtx = MMult(mtx, moving);
 
 	MV1SetMatrix(m_modelHandle, mtx);
 
@@ -97,6 +101,7 @@ void Player::Update()
 
 	m_velocity.x = 0;
 	m_velocity.y = 0;
+
 	Pad::Update();
 }
 
