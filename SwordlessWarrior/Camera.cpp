@@ -15,6 +15,8 @@ namespace
 	//constexpr VECTOR kFirstPos=VGet(300, 300, -200);
 
 	constexpr float kCameraFOV = 60.0f;
+
+	constexpr float kcameraRotateSpeed = 0.05f;
 }
 
 Camera::Camera()
@@ -34,12 +36,34 @@ Camera::~Camera()
 
 void Camera::Update()
 {
-	SetCameraPositionAndTarget_UpVecY(pos,VGet(0,0,0));
+
+	//if ((GetJoypadInputState(DX_INPUT_KEY_PAD1) & PAD_INPUT_LEFT))
+	if ((GetJoypadInputState(DX_INPUT_KEY_PAD1) & PAD_INPUT_5))
+	{
+		cameraAngle += kcameraRotateSpeed;
+	}
+	if ((GetJoypadInputState(DX_INPUT_KEY_PAD1) & PAD_INPUT_6))
+	{
+		cameraAngle -= kcameraRotateSpeed;
+	}
+
+	SetCameraNearFar(kCameraNear, kCameraFar);
+	VECTOR cameraPos;
+
+	float Length = sqrt(pos.x * pos.x + pos.z * pos.z);
+	
+
+	cameraPos.x = Length * static_cast<float>(cos(-fmodf(cameraAngle, 360)));
+	cameraPos.z = Length * static_cast<float>(sin(-fmodf(cameraAngle, 360)));
+	cameraPos.y = 300;
+	pos = cameraPos;
+	SetCameraPositionAndTarget_UpVecY(cameraPos, VGet(0,20,0));
 
 }
 
 VECTOR Camera::cameraToPlayer(std::shared_ptr<Player> player)
 {
-	VECTOR cameraToPlayer = VGet(sqrt((player->GetPos().z - pos.z) * (player->GetPos().z - pos.z)),0.0f, sqrt((player->GetPos().z - pos.z) * (player->GetPos().z - pos.z)));
+
+	VECTOR cameraToPlayer = VGet(sqrt((player->GetPos().x - pos.x) * (player->GetPos().x - pos.x)),0.0f, sqrt((player->GetPos().z - pos.z) * (player->GetPos().z - pos.z)));
 	return cameraToPlayer;
 }

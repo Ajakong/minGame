@@ -7,6 +7,9 @@
 class SphereCollision;
 class Physic;
 
+enum class Tag { Player = 1, Enemy = 2, EnemyAttackSphere = 3,FightBackObj=4 };
+
+
 class Object : public std::enable_shared_from_this<Object>
 {
 public:
@@ -24,9 +27,12 @@ public:
 
 	std::shared_ptr<SphereCollision> GetSphereCol() { return m_SphereCol; }
 
+	Tag GetTag() { return m_tag; }
 
 protected:
-	
+	Tag m_tag;
+
+
 	VECTOR m_pos;
 	std::shared_ptr<SphereCollision> m_SphereCol;
 

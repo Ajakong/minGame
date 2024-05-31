@@ -15,7 +15,7 @@ public:
 	void Draw();
 
 	
-	void WantCameraToPlayer(VECTOR cameraToPlayer);
+	void SetCameraToPlayer(VECTOR cameraToPlayer);
 	
 	void Hit();
 	int WatchHp()const { return m_Hp; }
@@ -76,6 +76,5 @@ private:
 	
 	float m_playerRotateY = 0;
 	float m_cameraAngle = 0;
-
 };
 

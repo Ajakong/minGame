@@ -48,6 +48,7 @@ TitleScene::TitleScene(SceneManager& manager) :
 
 TitleScene::~TitleScene()
 {
+	MV1DeleteModel(m_modelHandle);
 	Loader::TitleDelete();
 }
 

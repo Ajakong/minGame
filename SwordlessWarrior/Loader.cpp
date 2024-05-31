@@ -171,7 +171,7 @@ namespace Loader
 		MV1DeleteModel(playerHandle);
 		
 		//3Danimationƒnƒ“ƒhƒ‹
-		MV1DeleteModel(anim_sitting);
+		MV1DeleteModel(skydomeHandle);
 	}
 
 }

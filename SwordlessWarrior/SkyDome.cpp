@@ -4,7 +4,7 @@
 #include"Loader.h"
 
 SkyDome::SkyDome():
-	m_model(Loader::GetSkyDomeHandle())
+	m_model(MV1DuplicateModel(Loader::GetSkyDomeHandle()))
 {
 	MV1SetPosition(m_model, VGet(0, 0, 0));
 	MATRIX scaleMtx = MGetScale(VGet(30.0f, 30.0f, 5.0f));//XYZÇªÇÍÇºÇÍ1/5ÉXÉPÅ[Éã
@@ -14,6 +14,7 @@ SkyDome::SkyDome():
 
 SkyDome::~SkyDome()
 {
+	MV1DeleteModel(m_model);
 }
 
 void SkyDome::Update()

@@ -4,7 +4,7 @@
 
 namespace
 {
-	constexpr int kNetralRadius = 50;//通常時の当たり半径
+	constexpr int kNetralRadius = 30;//通常時の当たり半径
 
 	//アニメーション番号
 	constexpr int kIdleAnimIndex = 1;
@@ -18,7 +18,7 @@ namespace
 	constexpr float kAnimChangeRateSpeed = 1.0f / kAnimChangeFrame;
 
 	//アナログスティックによる移動関連
-	constexpr float kMaxSpeed = 2.0f;//プレイヤーの最大速度
+	constexpr float kMaxSpeed = 10.0f;//プレイヤーの最大速度
 	constexpr float kAnalogRangeMin = 0.1f;//アナログスティックの入力判定範囲
 	constexpr float kAnalogRangeMax = 0.8f;
 	constexpr float kAnalogInputMax = 1000.0f;//アナログスティックから入力されるベクトルの最大値
@@ -27,12 +27,12 @@ namespace
 }
 
 
-
 Player::Player(int modelhandle) :
 	m_modelHandle(MV1DuplicateModel(modelhandle)),
-	m_radius(50),
+	m_radius(30),
 	m_Hp(50)
 {
+	m_tag = Tag::Player;
 }
 
 Player::~Player()
@@ -71,32 +71,44 @@ void Player::Update()
 	rate = min(rate, 1.0f);
 	rate = max(rate, 0.0f);
 
-	//速度が決定できるので移動ベクトルに反映
-	move = VNorm(move);
-	float speed = kMaxSpeed * rate;
-
-	move = VScale(move, speed);
-	m_velocity = move;
-	m_pos =VAdd(m_pos,m_velocity);
+	
+	
 
 	//カメラのいる角度から
 	//コントローラーによる移動方向を決定する
 	MATRIX mtx;
 	MATRIX scale = MGetScale(VGet(0.5f, 0.5f, 0.5f));
-	MATRIX rotate = MGetRotY(-m_cameraAngle - DX_PI_F / 2);//本来はカメラを行列で制御し、その行列でY軸回転
-	mtx = MMult(scale, rotate);
-	move = VTransform(VGet(m_velocity.x+m_pos.x, m_velocity.y+m_pos.y, m_velocity.z+m_pos.z), rotate);
-	MATRIX moving = MGetTranslate(move);
+	float angle = fmodf(m_cameraAngle,360);
+	MATRIX rotate = MGetRotY((angle)-DX_PI_F/2 );//本来はカメラを行列で制御し、その行列でY軸回転
 	
-	m_velocity = move;
-	m_pos = m_velocity;
+	
+	//速度が決定できるので移動ベクトルに反映
+	move = VNorm(move);
+	float speed = kMaxSpeed * rate;
 
+	move = VScale(move, speed);
+
+	move = VTransform(VGet(move.x, 0, move.z), rotate);
+
+	m_velocity = move;
+
+	
+	m_pos = VAdd(m_pos, m_velocity);
+
+	//move = VTransform(VGet(m_velocity.x+m_pos.x, m_velocity.y, m_velocity.z+m_pos.z), rotate);
+	MATRIX moveDir = MGetRotY((angle)+DX_PI_F / 2);
+	mtx = MMult(scale, moveDir);
+
+	MATRIX moving = MGetTranslate(m_pos);
+	
+	
+	
 	mtx = MMult(mtx, moving);
 
 	MV1SetMatrix(m_modelHandle, mtx);
 
 	CollisonSetRadius(m_radius);
-	CollisionSetPos(m_pos);
+	CollisionSetPos(VGet(m_pos.x,m_pos.y+20,m_pos.z));
 
 
 	m_velocity.x = 0;
@@ -112,7 +124,7 @@ void Player::Draw()
 	MakeShadowMap(50, 50);
 }
 
-void Player::WantCameraToPlayer(VECTOR cameraToPlayer)
+void Player::SetCameraToPlayer(VECTOR cameraToPlayer)
 {
 	m_cameraToPlayer = cameraToPlayer;
 }

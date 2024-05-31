@@ -56,6 +56,8 @@ private:
 	/// 球体を生成して攻撃
 	/// </summary>
 	void AttackSphereUpdate();
+
+	VECTOR GetAttackDir() const;
 private:
 	int m_Hp;
 
@@ -68,6 +70,8 @@ private:
 	int m_createFrameCount = 0;
 
 	float m_centerToEnemyAngle;
+
+	float m_idleSpeed = 0;
 
 	int m_sphereNum = 0;
 
@@ -107,22 +111,28 @@ private:
 class EnemyAttackSphere : public Object
 {
 public:
-	EnemyAttackSphere(std::shared_ptr<Object>enemy,VECTOR pos,VECTOR velocity,int moveNum);
-	~EnemyAttackSphere();
+	EnemyAttackSphere(std::shared_ptr<Object>enemy,VECTOR pos,VECTOR velocity,int moveNum,int color=0xff0000);
+	virtual ~EnemyAttackSphere();
 
-	void Init();
-	void Update();
-	void Draw();
+	virtual void Init();
+	virtual void Update();
+	virtual void Draw();
 
-	void Hit();
+	virtual void Hit();
 
 	//メンバ関数ポインタ
 	using MoveState_t = void(EnemyAttackSphere::*)();
 	MoveState_t m_moveUpdate;
 
-private:
+protected:
 	void  StraightUpdate();//球を直線状に飛ばす
 
+protected:
+
+	int m_color = 0;
+
+private:
+	
 private:
 	
 	float m_radius = 0;
@@ -134,10 +144,10 @@ private:
 /// <summary>
 /// Playerが取得でEnemyにダメージ
 /// </summary>
-class FightBackObj :public Object
+class FightBackObj :public EnemyAttackSphere
 {
 public:
-	FightBackObj(std::shared_ptr<Object>enemy,VECTOR pos, VECTOR velocity);
+	FightBackObj(std::shared_ptr<Object>enemy,VECTOR pos, VECTOR velocity,int moveNum,int color);
 	~FightBackObj();
 
 	void Init();
@@ -158,6 +168,7 @@ private:
 
 private:
 
+	int m_color = 0xff0000;
 
 	float m_radius = 0;
 

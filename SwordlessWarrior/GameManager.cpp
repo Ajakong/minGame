@@ -26,15 +26,19 @@ GameManager::GameManager():
 	m_stageHandle(Loader::GetStageHandle()),
 	pSkyDome(std::make_shared<SkyDome>())
 {
-	pPhysic->Entry(pPlayer,nameTag::Player);
-	pPhysic->Entry(pEnemy, nameTag::Enemy);
+	pPhysic->Entry(pPlayer,pPlayer->GetTag());
+	pPhysic->Entry(pEnemy, pEnemy->GetTag());
 
 }
 
 GameManager::~GameManager()
 {
-	pPhysic->Exit(nameTag::Player);
-	pPhysic->Exit(nameTag::Enemy);
+	pPhysic->Exit(pPlayer->GetTag());
+	pPhysic->Exit(pEnemy->GetTag());
+	for (auto& obj : pEnemy->GetAttackObj())
+	{
+		pPhysic->Exit(obj->GetTag());
+	}
 }
 
 void GameManager::Init()
@@ -42,7 +46,6 @@ void GameManager::Init()
 	pShadow->SetLight();
 
 	pPlayer->Init();
-	pPlayer->WantCameraToPlayer(pCamera->cameraToPlayer(pPlayer));
 	
 	pEnemy->Init();
 
@@ -51,11 +54,14 @@ void GameManager::Init()
 	SetFogEnable(TRUE);					// フォグを有効にする
 	SetFogColor(100, 0, 0);			// フォグの色にする
 	SetFogStartEnd(0.0f, 3000.0f);	// フォグの開始距離
+
 }
 
 void GameManager::Update()
 {
 	pSkyDome->Update();
+
+	pPlayer->SetCameraToPlayer(pCamera->cameraToPlayer(pPlayer));
 
 	pPlayer->SetCameraAngle(pCamera->GetCameraAngle());
 	pPlayer->Update();
@@ -66,7 +72,7 @@ void GameManager::Update()
 
 	for (auto& obj : pEnemy->GetAttackObj())
 	{
-		pPhysic->Entry(obj, nameTag::EnemyAttackObj);
+		pPhysic->Entry(obj, obj->GetTag());
 	}
 	MV1SetPosition(m_stageHandle, VGet(0, -50, 0));
 
