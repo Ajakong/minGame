@@ -7,7 +7,8 @@
 class SphereCollision;
 class Physic;
 
-enum class Tag { Player = 1, Enemy = 2, EnemyAttackSphere = 3,FightBackObj=4 };
+enum class Tag
+{ Player, Enemy, EnemyAttackSphere ,FightBackObj,EnemyAttackBox,EnemyAttackBomb };
 
 
 class Object : public std::enable_shared_from_this<Object>

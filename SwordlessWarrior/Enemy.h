@@ -10,6 +10,9 @@ class EnemyAttackBox;
 class EnemyAttackSphere;
 class FightBackObj;
 
+/// <summary>
+/// ReadMe:GameManager.cpp以外でincludeしない
+/// </summary>
 class Enemy : public Object
 {
 public:
@@ -56,6 +59,10 @@ private:
 	/// 球体を生成して攻撃
 	/// </summary>
 	void AttackSphereUpdate();
+	/// <summary>
+	/// 爆弾を上から投下して攻撃
+	/// </summary>
+	void AttackBombUpdate();
 
 	VECTOR GetAttackDir() const;
 private:
@@ -74,6 +81,7 @@ private:
 	float m_idleSpeed = 0;
 
 	int m_sphereNum = 0;
+	int m_bombNum = 0;
 
 	VECTOR m_velocity;
 	VECTOR m_attackDir;
@@ -99,8 +107,6 @@ public:
 	void Draw();
 
 private:
-	
-
 	VECTOR m_velocity;
 	std::shared_ptr<Enemy>m_enemy;
 };
@@ -120,6 +126,8 @@ public:
 
 	virtual void Hit();
 
+	virtual bool IsDelete() { return m_isDeleteFlag; }
+
 	//メンバ関数ポインタ
 	using MoveState_t = void(EnemyAttackSphere::*)();
 	MoveState_t m_moveUpdate;
@@ -128,13 +136,15 @@ protected:
 	void  StraightUpdate();//球を直線状に飛ばす
 
 protected:
+	
 
 	int m_color = 0;
+	bool m_isDeleteFlag = 0;
 
 private:
-	
+	void DeleteJudge();
+
 private:
-	
 	float m_radius = 0;
 
 	VECTOR m_velocity;
@@ -167,7 +177,6 @@ private:
 	void FightBackUpdate();
 
 private:
-
 	int m_color = 0xff0000;
 
 	float m_radius = 0;
@@ -177,5 +186,33 @@ private:
 	VECTOR m_velocity;
 
 	std::shared_ptr<Enemy>m_enemy;
+};
+
+class EnemyAttackBomb :public EnemyAttackSphere
+{
+public:
+	EnemyAttackBomb(std::shared_ptr<Object>enemy, VECTOR pos, VECTOR velocity, int moveNum, int color=0xff0000);
+	~EnemyAttackBomb();
+
+	void Init();
+	void Update();
+	void Draw();
+
+	void Hit();
+
+	//メンバ関数ポインタ
+	using MoveState_t = void(EnemyAttackBomb::*)();
+	MoveState_t m_moveUpdate;
+
+private:
+	void MoveUpdate();
+	void ExplosionUpdate();
+
+private:
+	float m_radius = 0;
+
+	VECTOR m_velocity;
+	std::shared_ptr<Enemy>m_enemy;
+
 };
 

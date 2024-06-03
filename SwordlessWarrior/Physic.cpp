@@ -48,6 +48,7 @@ bool Physic::JudgeColision(std::shared_ptr<Object> obj1, std::shared_ptr<Object>
 	float Distance = sqrt(DisX * DisX + DisY * DisY+DisZ*DisZ);
 	if (Distance < obj1->GetSphereCol()->GetRadius() + obj2->GetSphereCol()->GetRadius()) return true;
 
+	
 	return false;
 }
 

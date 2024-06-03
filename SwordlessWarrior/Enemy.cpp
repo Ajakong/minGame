@@ -2,12 +2,39 @@
 
 namespace
 {
-	constexpr float kSphereRadius = 10;
+	/// <summary>
+	/// 球の当たり判定半径
+	/// </summary>
+	constexpr float kSphereRadius = 10.0f;
+	/// <summary>
+	/// 球の生成間隔
+	/// </summary>
 	constexpr int kSphereCreateFrame = 50;
+	/// <summary>
+	/// ボムの投下間隔
+	/// </summary>
+	constexpr int kBombCreateFrame = 70;
 
-	constexpr float kFightBackObjRadius = 10;
+	/// <summary>
+	/// 反撃オブジェクトの当たり判定の大きさ
+	/// </summary>
+	constexpr float kFightBackObjRadius = 10.0f;
 
+	/// <summary>
+	/// 再攻撃までのクールタイム
+	/// </summary>
 	constexpr int kAttackCoolDownTime = 60;
+
+	/// <summary>
+	/// ステージモデルの縦横サイズ/2
+	/// </summary>
+	constexpr int kStageSizeHalf = 200;
+
+	/// <summary>
+	/// ボムを生成する位置の高さ
+	/// </summary>
+	constexpr float kBombCreatePosY = 50.0f;
+
 
 }
 
@@ -88,11 +115,12 @@ void Enemy::Update()
 	
 	m_sphere.remove_if([this](const auto& sphere)
 		{
-			bool isOut = CheckCameraViewClip(sphere->GetPos()) != 0;
-			if (isOut)
-			{
-				//m_sphereNum--;
-			}
+			bool isOut = sphere->IsDelete()==true;
+			
+			if (sphere->GetTag() == Tag::EnemyAttackSphere);
+			if (sphere->GetTag() == Tag::EnemyAttackBomb);
+
+
 			return isOut;
 		});
 }
@@ -154,7 +182,7 @@ void Enemy::StartUpdate()
 	if (m_pos.y <= 0)
 	{
 		m_pos.y = 0;
-		m_enemyUpdate = &Enemy::AttackSphereUpdate;
+		m_enemyUpdate = &Enemy::AttackBombUpdate;
 	}
 }
 
@@ -187,8 +215,17 @@ void Enemy::IdleUpdate()
 
 	if (m_attackCoolDownCount > kAttackCoolDownTime)
 	{
-		m_attackCoolDownCount = 0;
-		m_enemyUpdate = &Enemy::AttackSphereUpdate;
+		int attackState = GetRand(1);
+		if (attackState == 0)
+		{
+			m_attackCoolDownCount = 0;
+			m_enemyUpdate = &Enemy::AttackSphereUpdate;
+		}
+		else
+		{
+			m_attackCoolDownCount = 0;
+			m_enemyUpdate = &Enemy::AttackBombUpdate;
+		}
 	}
 }
 
@@ -212,11 +249,31 @@ void Enemy::AttackSphereUpdate()
 		}	
 		else
 		{
-			m_sphere.push_back(std::make_shared<FightBackObj>(shared_from_this(), GetMyPos(), m_attackDir, 1, 0x00ff00));
 			m_sphereNum = 0;
+			m_sphere.push_back(std::make_shared<FightBackObj>(shared_from_this(), GetMyPos(), m_attackDir, 1, 0x00ff00));
+
 			m_idleSpeed = static_cast<float>(GetRand(19)+1);
 			m_enemyUpdate = &Enemy::IdleUpdate;
 		}
+	}
+}
+
+void Enemy::AttackBombUpdate()
+{
+	m_createFrameCount++;
+	if (m_createFrameCount > kBombCreateFrame)
+	{
+		m_bombNum++;
+
+		m_sphere.push_back(std::make_shared<EnemyAttackBomb>(shared_from_this(),
+			VGet(static_cast<float>(GetRand(kStageSizeHalf) - kStageSizeHalf), kBombCreatePosY, static_cast<float>(GetRand(kStageSizeHalf) - kStageSizeHalf)),
+			VGet(0, -1, 0), 1));
+	}
+	if (m_bombNum == 5)
+	{
+		m_bombNum = 0;
+		m_idleSpeed = static_cast<float>(GetRand(19) + 1);
+		m_enemyUpdate = &Enemy::IdleUpdate;
 	}
 }
 
@@ -230,6 +287,7 @@ VECTOR Enemy::GetAttackDir() const
 
 EnemyAttackBox::EnemyAttackBox(std::shared_ptr<Enemy>enemy)
 {
+	m_tag = Tag::EnemyAttackBox;
 }
 
 EnemyAttackBox::~EnemyAttackBox()
@@ -275,6 +333,7 @@ void EnemyAttackSphere::Init()
 void EnemyAttackSphere::Update()
 {
 	(this->*m_moveUpdate)();
+	DeleteJudge();
 }
 
 void EnemyAttackSphere::Draw()
@@ -291,6 +350,14 @@ void EnemyAttackSphere::StraightUpdate()
 	m_pos = VAdd(m_pos, VGet(m_velocity.x*20,m_velocity.y*20,m_velocity.z*20));
 
 	CollisionSetPos(m_pos);
+}
+
+void EnemyAttackSphere::DeleteJudge()
+{
+	if (CheckCameraViewClip(m_pos) != 0)
+	{
+		m_isDeleteFlag = true;
+	}
 }
 
 
@@ -343,6 +410,9 @@ void FightBackObj::Hit()
 	}
 }
 
+/// <summary>
+/// いらんかもしらん
+/// </summary>
 void FightBackObj::MoveUpdate()
 {
 	VAdd(m_pos , m_velocity);
@@ -370,3 +440,50 @@ VECTOR norm(VECTOR a)
 	return VGet(a.x / num, a.y / num, a.z  / num);
 }
 
+EnemyAttackBomb::EnemyAttackBomb(std::shared_ptr<Object>enemy, VECTOR pos, VECTOR velocity, int moveNum, int color): EnemyAttackSphere(enemy,pos,velocity,moveNum,color)
+{
+	m_moveUpdate = &EnemyAttackBomb::MoveUpdate;
+	m_tag = Tag::EnemyAttackBomb;
+}
+
+EnemyAttackBomb::~EnemyAttackBomb()
+{
+}
+
+void EnemyAttackBomb::Init()
+{
+}
+
+void EnemyAttackBomb::Update()
+{
+	(this->*m_moveUpdate)();
+	if (m_radius > 50.0f)
+	{
+		m_isDeleteFlag = true;
+	}
+	if (m_pos.y <=  0)
+	{
+		m_isDeleteFlag = true;
+	}
+}
+
+void EnemyAttackBomb::Draw()
+{
+	DrawSphere3D(m_pos, m_radius, 10, 0xffff00, m_color, false);
+}
+
+void EnemyAttackBomb::Hit()
+{
+	m_moveUpdate = &EnemyAttackBomb::ExplosionUpdate;
+	m_color = 0xffff00;
+}
+
+void EnemyAttackBomb::MoveUpdate()
+{
+	VAdd(m_pos, m_velocity);
+}
+
+void EnemyAttackBomb::ExplosionUpdate()
+{
+	m_radius++;
+}
