@@ -26,6 +26,7 @@ void Physic::Update()
 		}
 	}
 
+	CollisionManage();
 	
 }
 
@@ -46,8 +47,10 @@ bool Physic::JudgeColision(std::shared_ptr<Object> obj1, std::shared_ptr<Object>
 	float DisY = (obj2->GetPos().y - obj1->GetPos().y);
 	float DisZ = (obj2->GetPos().z - obj1->GetPos().z);
 	float Distance = sqrt(DisX * DisX + DisY * DisY+DisZ*DisZ);
-	if (Distance < obj1->GetSphereCol()->GetRadius() + obj2->GetSphereCol()->GetRadius()) return true;
-
+	if (Distance < obj1->GetSphereCol()->GetRadius() + obj2->GetSphereCol()->GetRadius())
+	{
+		return true;
+	}
 	
 	return false;
 }
@@ -62,10 +65,9 @@ void Physic::CollisionManage()
 		}
 		else
 		{
-
+			item.objA->Hit();
+			item.objB->Hit();
 		}
-		item.objA->Hit();
-		item.objB->Hit();
 	}
 }
 

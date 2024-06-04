@@ -24,6 +24,7 @@ namespace Loader
 	//2Dtextureハンドル
 	int GetTextureTitle();
 	int GetTextureGameOver();
+	int GetEnemyHpBarHandle();
 
 	void TitleLoad();//タイトルで使用するものの読み込み
 	void TitleDelete();//削除

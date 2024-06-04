@@ -7,6 +7,7 @@ class Player;
 class Enemy;
 class Camera;
 class SkyDome;
+class UI;
 
 using namespace std;
 class GameManager
@@ -27,6 +28,7 @@ private:
 	std::shared_ptr<Enemy>  pEnemy;
 	std::shared_ptr<Camera> pCamera;
 	std::shared_ptr<SkyDome>pSkyDome;
+	std::shared_ptr<UI>pUI;
 
 
 	int m_stageHandle = 0;

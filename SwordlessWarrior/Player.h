@@ -29,18 +29,19 @@ public:
 	playerState_t m_playerUpdate;
 
 private:
-	////アニメーションの進行
-	////ループしたかどうかを返す
-	//bool UpdateAnim(int attachNo);
-	////アニメーションの変更
-	//void ChangeAnim(int animIndex);
+	//アニメーションの進行
+	//ループしたかどうかを返す
+	bool UpdateAnim(int attachNo);
+	//アニメーションの変更
+	void ChangeAnim(int animIndex);
 
-	////状態別関数(ポインタで呼び出す)
-	//void StartUpdate();
-	//void IdleUpdate();
-	//void WalkingUpdate();
-	//void JumpingUpdate();
-	//void OnDamageUpdate();
+	//状態別関数(ポインタで呼び出す)
+	void StartUpdate();
+	void IdleUpdate();
+	void NeutralUpdate();
+	void WalkingUpdate();
+	void JumpingUpdate();
+	void HitUpdate();
 
 	VECTOR GetCameraToPlayer()const;
 
@@ -76,5 +77,8 @@ private:
 	
 	float m_playerRotateY = 0;
 	float m_cameraAngle = 0;
+
+	bool m_isVisibleFlag = false;
+	int m_visibleCount = 0;
 };
 

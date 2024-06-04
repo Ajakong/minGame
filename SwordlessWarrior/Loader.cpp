@@ -26,6 +26,7 @@ namespace
 	//2Dtextureハンドル
 	int titleHandle = -1;
 	int gameOverHandle = -1;
+	int ui_EnemyHpbarHandle = -1;
 }
 
 namespace Loader
@@ -90,6 +91,10 @@ namespace Loader
 	{
 		return gameOverHandle;
 	}
+	int GetEnemyHpBarHandle()
+	{
+		return ui_EnemyHpbarHandle;
+	}
 	void TitleLoad()
 	{
 		//3Danimationハンドル
@@ -128,6 +133,9 @@ namespace Loader
 		//Soundハンドル
 		BGM_Battle = LoadSoundMem("BGM/battle.mp3");
 		BGM_Ending = LoadSoundMem("BGM/ending.mp3");
+
+		//2Dtexture
+		ui_EnemyHpbarHandle = LoadGraph("UI/HPBar.png");
 	}
 	void GameSceneDelete()
 	{
@@ -145,6 +153,9 @@ namespace Loader
 		//Soundハンドル
 		DeleteSoundMem(BGM_Battle);
 		DeleteSoundMem(BGM_Ending);
+
+		//2Dtexture
+		DeleteGraph(ui_EnemyHpbarHandle);
 	}
 
 	void GameOverSceneLoad()

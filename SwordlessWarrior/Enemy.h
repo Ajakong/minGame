@@ -31,10 +31,13 @@ public:
 
 	void Hit();
 
+	void HitFightBackObj();
+
 	void SetCameraAngle(float cameraAngle);
 
 	void SetAttackDir(VECTOR targetPos);
 	VECTOR GetMyPos();
+	int GetHp() const { return m_Hp; }
 
 
 	std::list<std::shared_ptr<EnemyAttackSphere>> GetAttackObj() { return m_sphere; }

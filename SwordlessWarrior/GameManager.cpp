@@ -8,6 +8,7 @@
 #include"Enemy.h"
 #include"SkyDome.h"
 #include"Camera.h"
+#include"UI.h"
 
 
 namespace nameTag
@@ -24,7 +25,8 @@ GameManager::GameManager():
 	pEnemy(std::make_shared<Enemy>(Loader::GetEnemyHandle(),pPlayer)),
 	pCamera(std::make_shared<Camera>()),
 	m_stageHandle(Loader::GetStageHandle()),
-	pSkyDome(std::make_shared<SkyDome>())
+	pSkyDome(std::make_shared<SkyDome>()),
+	pUI(std::make_shared<UI>())
 {
 	pPhysic->Entry(pPlayer,pPlayer->GetTag());
 	pPhysic->Entry(pEnemy, pEnemy->GetTag());
@@ -106,5 +108,6 @@ void GameManager::Draw()
 
 	pShadow->Fin();
 
+	pUI->DrawEnemyHp(pEnemy->GetHp());
 
 }
