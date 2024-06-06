@@ -63,6 +63,10 @@ void Physic::CollisionManage()
 		{
 			item.objB->Hit();
 		}
+		else if (item.objA->GetTag() == Tag::FightBackObj && item.objB->GetTag() == Tag::Player)
+		{
+			item.objA->Hit();
+		}
 		else
 		{
 			item.objA->Hit();

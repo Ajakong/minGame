@@ -117,14 +117,14 @@ void Enemy::Update()
 		{
 			bool isOut = sphere->IsDelete() == true;
 
-			if (sphere->GetTag() == Tag::EnemyAttackSphere)
-			{
-				m_sphereNum--;
-			}
-			if (sphere->GetTag() == Tag::EnemyAttackBomb)
-			{
-				m_bombNum--;
-			}
+			//if (sphere->GetTag() == Tag::EnemyAttackSphere)
+			//{
+			//	m_sphereNum--;
+			//}
+			//if (sphere->GetTag() == Tag::EnemyAttackBomb)
+			//{
+			//	m_bombNum--;
+			//}
 			return isOut;
 		});
 }
@@ -375,7 +375,8 @@ void EnemyAttackSphere::DeleteJudge()
 FightBackObj::FightBackObj(std::shared_ptr<Object>enemy, VECTOR pos, VECTOR velocity, int moveNum, int color) :EnemyAttackSphere(enemy, pos, velocity, moveNum, color),
 m_enemy(std::dynamic_pointer_cast<Enemy>(enemy)),
 m_radius(kFightBackObjRadius),
-m_velocity(velocity)
+m_velocity(velocity),
+m_isTransFlag(false)
 {
 	m_tag = Tag::FightBackObj;
 	m_color = color;
