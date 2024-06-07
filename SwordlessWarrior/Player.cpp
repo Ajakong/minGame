@@ -53,6 +53,11 @@ void Player::Update()
 
 	Pad::Update();
 
+	if (m_visibleCount > 200)
+	{
+		m_isVisibleFlag = false;
+		m_visibleCount = 0;
+	}
 	if (m_isVisibleFlag)
 	{
 		m_visibleCount++;
@@ -66,7 +71,7 @@ void Player::Update()
 
 void Player::Draw()
 {
-	if (m_visibleCount % 3 == 0)
+	if (m_visibleCount % 10 == 0)
 	{
 		MV1DrawModel(m_modelHandle);
 	}
@@ -84,8 +89,7 @@ void Player::Hit()
 	printfDx("PlayerIsHit");
 	m_Hp -= 10;
 	m_isVisibleFlag = true;
-	//当たり判定半径を0にして無敵
-	CollisonSetRadius(0);
+	m_isHitFlag=false;
 	
 	ChangeAnim(m_attach_hit);
 	m_playerUpdate = &Player::HitUpdate;
@@ -212,6 +216,7 @@ void Player::NeutralUpdate()
 
 	m_velocity.x = 0;
 	m_velocity.y = 0;
+	
 }
 
 void Player::WalkingUpdate()
@@ -225,6 +230,9 @@ void Player::JumpingUpdate()
 void Player::HitUpdate()
 {
 	//ダメージアニメーションのみ
+	m_playerUpdate = &Player::NeutralUpdate;
+	
+	
 }
 
 

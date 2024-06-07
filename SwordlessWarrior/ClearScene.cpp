@@ -4,7 +4,7 @@
 #include "SceneManager.h"
 #include "ClearScene.h"
 #include "TitleScene.h"
-
+#include"Loader.h"
 #include"Game.h"
 #include"Pad.h"
 
@@ -61,6 +61,7 @@ void ClearScene::FadeOutUpdate()
 	m_frame++;
 	if (60 <= m_frame)
 	{
+		Loader::TitleLoad();
 		m_manager.ChangeScene(std::make_shared<TitleScene>(m_manager));
 	}
 }

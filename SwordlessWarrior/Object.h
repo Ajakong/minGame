@@ -30,6 +30,11 @@ public:
 
 	Tag GetTag() { return m_tag; }
 
+	/// <summary>
+	/// 当たり判定が活動しているか
+	/// </summary>
+	bool GetHitFlag() { return m_isHitFlag; }
+	bool GetExtinctionFlag() { return m_isExtinction; }
 protected:
 	Tag m_tag;
 
@@ -37,6 +42,8 @@ protected:
 	VECTOR m_pos;
 	std::shared_ptr<SphereCollision> m_SphereCol;
 
-	bool m_isHitFlag = false;
+	bool m_isHitFlag = true;
+	//オブジェクトが消滅するときにtrue;
+	bool m_isExtinction = false;
 };
 

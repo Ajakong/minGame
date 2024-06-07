@@ -1,5 +1,6 @@
 #include "Enemy.h"
 
+
 namespace
 {
 	/// <summary>
@@ -41,13 +42,14 @@ namespace
 /*プロトタイプ宣言*/
 VECTOR ToVec(VECTOR a, VECTOR b);
 VECTOR norm(VECTOR a);
+float lerp(float start, float end, float t);
 
 Enemy::Enemy(int modelhandle, std::shared_ptr<Object> obj) :
 	m_obj(obj),
 	m_modelHandle(MV1DuplicateModel(modelhandle)),
 	m_anim_nutral(Loader::GetAnimationFalling()),
 	m_enemyUpdate(&Enemy::StartUpdate),
-	m_Hp(70),
+	m_Hp(80),
 	m_radius(kSphereRadius),
 	m_attackCoolDownCount(0),
 	m_attackDir(VGet(1.0f, 0.0f, 0.0f)),
@@ -203,9 +205,9 @@ void Enemy::IdleUpdate()
 	/*VECTOR tovec= ToVec(m_pos, m_obj->GetPos());
 	m_centerToEnemyAngle = atan2(tovec.z, tovec.x);*/
 
-	float Angle = -90 - atan2(m_attackDir.z, m_attackDir.x);
+	
 	m_centerToEnemyAngle += m_idleSpeed;
-
+	float Angle = m_centerToEnemyAngle+DX_PI_F;
 	float Length = sqrt(m_pos.x * m_pos.x + m_pos.z * m_pos.z);
 
 	m_pos.x = Length * static_cast<float>(cos(m_centerToEnemyAngle * DX_PI_F / 180.0));
@@ -353,6 +355,8 @@ void EnemyAttackSphere::Draw()
 
 void EnemyAttackSphere::Hit()
 {
+	m_isDeleteFlag = true;
+	m_isExtinction = true;
 }
 
 void EnemyAttackSphere::StraightUpdate()
@@ -367,6 +371,7 @@ void EnemyAttackSphere::DeleteJudge()
 	if (CheckCameraViewClip(m_pos) != 0)
 	{
 		m_isDeleteFlag = true;
+		m_isExtinction = true;
 	}
 }
 
@@ -376,12 +381,16 @@ FightBackObj::FightBackObj(std::shared_ptr<Object>enemy, VECTOR pos, VECTOR velo
 m_enemy(std::dynamic_pointer_cast<Enemy>(enemy)),
 m_radius(kFightBackObjRadius),
 m_velocity(velocity),
-m_isTransFlag(false)
+m_isTransFlag(false),
+m_speed(1000)
 {
 	m_tag = Tag::FightBackObj;
 	m_color = color;
 	CollisonSetRadius(m_radius);
-	m_moveUpdate = &FightBackObj::StraightUpdate;
+	m_moveUpdate = &FightBackObj::MoveUpdate;
+	m_velocity = VGet(m_velocity.x * 5, m_velocity.y * 5, m_velocity.z * 5);
+	VECTOR to = ToVec(m_pos, VAdd(m_pos, VGet(m_velocity.x * 10, m_velocity.y * 10, m_velocity.z * 10)));
+	m_centerAngle = atan2(to.z, to.x);
 }
 
 FightBackObj::~FightBackObj()
@@ -408,15 +417,27 @@ void FightBackObj::Hit()
 {
 	if (!m_isTransFlag)
 	{
-		m_moveUpdate = &FightBackObj::FightBackUpdate;
-		m_velocity = norm(ToVec(m_pos, m_enemy->GetPos()));
-		m_velocity = VGet(m_velocity.x * 5, m_velocity.y + 5, m_velocity.z * 5);
+		m_moveUpdate = &FightBackObj::TurnUpdate;
+		
 		m_isTransFlag = true;
+		m_isHitFlag = false;
 	}
 	else
 	{
-		//プレイヤーが取得後にカウンター挙動
-		m_enemy->HitFightBackObj();
+		//*応急処置！！
+		//ToDo:Playerと当たった際は判定しないようにしたい
+		float DisX = (m_pos.x - m_enemy->GetPos().x);
+		float DisY = (m_pos.y - m_enemy->GetPos().y);
+		float DisZ = (m_pos.z - m_enemy->GetPos().z);
+		float Distance = sqrt(DisX * DisX + DisZ * DisZ);
+		if (Distance < m_radius + m_enemy->GetColRadius())
+		{
+			//プレイヤーが取得後にカウンター挙動
+			m_enemy->HitFightBackObj();
+			m_isDeleteFlag = true;
+			m_isExtinction = true;
+		}
+		
 	}
 }
 
@@ -425,13 +446,32 @@ void FightBackObj::Hit()
 /// </summary>
 void FightBackObj::MoveUpdate()
 {
-	VAdd(m_pos, m_velocity);
+	m_pos=VAdd(m_pos, m_velocity);
 }
 
 void FightBackObj::FightBackUpdate()
 {
-	m_velocity.y--;
-	VAdd(m_pos, m_velocity);
+	m_speed+=100;
+	m_velocity = norm(ToVec(m_pos, m_enemy->GetPos()));
+	//m_velocity = VGet(lerp(m_pos.x, m_enemy->GetPos().x, m_speed),0, lerp(m_pos.z, m_enemy->GetPos().z, m_speed));
+	m_velocity = VGet(m_velocity.x * m_speed, m_velocity.y  * m_speed, m_velocity.z  * m_speed);
+	
+	m_pos=VAdd(m_pos, m_velocity);
+}
+
+void FightBackObj::TurnUpdate()
+{
+	m_turnFrame++;
+	
+	m_centerAngle += 10.0f;
+	float Length = sqrt(m_pos.x * m_pos.x + m_pos.z * m_pos.z);
+
+	m_pos.x = Length * static_cast<float>(cos(m_centerAngle * DX_PI_F / 180.0));
+	m_pos.z = Length * static_cast<float>(sin(m_centerAngle * DX_PI_F / 180.0));
+	if (m_turnFrame > 30)
+	{
+		m_moveUpdate = &FightBackObj::FightBackUpdate;
+	}
 }
 
 /*便利関数*/
@@ -448,6 +488,11 @@ VECTOR norm(VECTOR a)
 {
 	float num = (a.x * a.x) + (a.y * a.y) + (a.z * a.z);
 	return VGet(a.x / num, a.y / num, a.z / num);
+}
+
+float lerp(float start, float end, float t)
+{
+	return (1 - t) * start + t * end;
 }
 
 EnemyAttackBomb::EnemyAttackBomb(std::shared_ptr<Object>enemy, VECTOR pos, VECTOR velocity, int moveNum, int color) : EnemyAttackSphere(enemy, pos, velocity, moveNum, color)

@@ -15,10 +15,13 @@ void Physic::Update()
 {
 	for (const auto& obj1 : data::object)
 	{
+		//“–‚½‚è”»’è‚ªŠˆ“®‚µ‚Ä‚¢‚È‚©‚Á‚½‚ç”»’è‚µ‚È‚¢
+		if (!obj1.second->GetHitFlag()) continue;
 		for (const auto& obj2 : data::object)
 		{
 			if (obj1.first == obj2.first)continue;
 			
+
 			if(JudgeColision(obj1.second,obj2.second))
 			{
 				m_collisionObjectList.push_back({ obj1.second,obj2.second });
@@ -27,7 +30,15 @@ void Physic::Update()
 	}
 
 	CollisionManage();
-	
+	m_collisionObjectList.clear();
+
+	for (const auto& item : data::object)
+	{
+		if (item.second->GetExtinctionFlag())
+		{
+			Exit(item.first);
+		}
+	}
 }
 
 void Physic::Entry(std::shared_ptr<Object> obj,Tag name)
@@ -59,14 +70,8 @@ void Physic::CollisionManage()
 {
 	for (const auto& item : m_collisionObjectList)
 	{
-		if (item.objA->GetTag() == Tag::Player && item.objB->GetTag() == Tag::FightBackObj)
-		{
-			item.objB->Hit();
-		}
-		else if (item.objA->GetTag() == Tag::FightBackObj && item.objB->GetTag() == Tag::Player)
-		{
-			item.objA->Hit();
-		}
+		if (item.objA->GetTag() == Tag::Player && item.objB->GetTag() == Tag::FightBackObj)item.objB->Hit();
+		else if (item.objA->GetTag() == Tag::FightBackObj && item.objB->GetTag() == Tag::Player)item.objA->Hit();
 		else
 		{
 			item.objA->Hit();

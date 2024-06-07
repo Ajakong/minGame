@@ -37,7 +37,10 @@ public:
 
 	void SetAttackDir(VECTOR targetPos);
 	VECTOR GetMyPos();
-	int GetHp() const { return m_Hp; }
+	int WatchHp() const { return m_Hp; }
+	float GetColRadius() { return m_radius; }
+
+	float GetIdleSpeed() { return m_idleSpeed; }
 
 
 	std::list<std::shared_ptr<EnemyAttackSphere>> GetAttackObj() { return m_sphere; }
@@ -178,13 +181,20 @@ public:
 private:
 	void MoveUpdate();
 	void FightBackUpdate();
-
+	void TurnUpdate();
 private:
 	int m_color = 0xff0000;
 
+	int m_turnFrame = 0;
+
 	float m_radius = 0;
 
+	float m_centerAngle;
+
+
 	bool m_isTransFlag = false;
+
+	int m_speed=0;
 
 	VECTOR m_velocity;
 

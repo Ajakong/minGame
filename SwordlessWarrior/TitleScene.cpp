@@ -24,7 +24,6 @@ namespace
 TitleScene::TitleScene(SceneManager& manager) :
 	Scene(manager),
 	m_titleHandle(Loader::GetTextureTitle()),
-	m_modelHandle(Loader::GetPlayerHandle()),
 	m_model_sit(Loader::GetAnimationSitting()),
 	m_stageBgm(Loader::GetBGM_title()),
 	m_camera(std::make_shared<Camera>()),
@@ -37,7 +36,7 @@ TitleScene::TitleScene(SceneManager& manager) :
 	m_drawFunc = &TitleScene::FadeDraw;
 	
 	m_attach_move = MV1AttachAnim(m_modelHandle, 0, m_model_sit);
-	m_modelHandle = MV1DuplicateModel(m_modelHandle);
+	m_modelHandle = MV1DuplicateModel(Loader::GetPlayerHandle());
 	m_attach_move = MV1AttachAnim(m_modelHandle, 0, m_model_sit);
 
 	SetFogEnable(TRUE);					// フォグを有効にする

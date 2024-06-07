@@ -76,13 +76,18 @@ void GameManager::Update()
 	{
 		pPhysic->Entry(obj, obj->GetTag());
 	}
+
 	MV1SetPosition(m_stageHandle, VGet(0, -50, 0));
 
 	pPhysic->Update();
 
-	if (pPlayer->WatchHp() < 0)
+	if (pPlayer->WatchHp() <= 0)
 	{
 		m_isGameOverFlag = true;
+	}
+	if (pEnemy->WatchHp() <= 0)
+	{
+		m_isClearFlag = true;
 	}
 	
 }
@@ -108,6 +113,6 @@ void GameManager::Draw()
 
 	pShadow->Fin();
 
-	pUI->DrawEnemyHp(pEnemy->GetHp());
+	pUI->DrawEnemyHp(pEnemy->WatchHp());
 
 }
