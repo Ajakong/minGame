@@ -113,6 +113,6 @@ void GameManager::Draw()
 
 	pShadow->Fin();
 
-	pUI->DrawEnemyHp(pEnemy->WatchHp());
+	pUI->DrawEnemyHp(pEnemy->WatchHp(),pPlayer->WatchHp());
 
 }

@@ -11,7 +11,7 @@ public:
 
 	void Init();
 	void Update();
-	void DrawEnemyHp(int enemyHp);
+	void DrawEnemyHp(int enemyHp, int playerHp);
 	void Draw(std::shared_ptr<Enemy>enemy);
 
 private:

@@ -106,27 +106,9 @@ void Enemy::Update()
 
 	}
 
-	//for (auto& sphere : m_sphere)
-	//{
-	//	if (CheckCameraViewClip(sphere->GetPos()) != 0)
-	//	{
-	//		m_sphereNum--;
- //			m_sphere.remove(sphere);
-	//	}
-	//}
-
 	m_sphere.remove_if([this](const auto& sphere)
 		{
 			bool isOut = sphere->IsDelete() == true;
-
-			//if (sphere->GetTag() == Tag::EnemyAttackSphere)
-			//{
-			//	m_sphereNum--;
-			//}
-			//if (sphere->GetTag() == Tag::EnemyAttackBomb)
-			//{
-			//	m_bombNum--;
-			//}
 			return isOut;
 		});
 }
@@ -149,7 +131,7 @@ void Enemy::WantToPlayer(VECTOR cameraToPlayer)
 void Enemy::Hit()
 {
 	m_Hp -= 10;
-	printfDx("EnemyIsHit");
+	//printfDx("EnemyIsHit");
 }
 
 void Enemy::HitFightBackObj()
@@ -201,10 +183,6 @@ void Enemy::IdleUpdate()
 {
 	//モデルのサイズ調整S
 	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/5スケール
-	//m_attackDir = norm(ToVec(m_pos, m_obj->GetPos()));//オブジェクトに向かうベクトルを正規化したもの
-	/*VECTOR tovec= ToVec(m_pos, m_obj->GetPos());
-	m_centerToEnemyAngle = atan2(tovec.z, tovec.x);*/
-
 	
 	m_centerToEnemyAngle += m_idleSpeed;
 	float Angle = m_centerToEnemyAngle+DX_PI_F;
@@ -219,8 +197,6 @@ void Enemy::IdleUpdate()
 	Mtx = MMult(Mtx, transMtx);
 
 	MV1SetMatrix(m_modelHandle, Mtx);
-
-	//MV1SetPosition(m_modelHandle, VGet(m_pos.x, m_pos.y, m_pos.z));
 
 	m_attackCoolDownCount++;
 
@@ -409,7 +385,7 @@ void FightBackObj::Update()
 
 void FightBackObj::Draw()
 {
-	DrawSphere3D(m_pos, kSphereRadius, 10, 0xffff00, m_color, false);
+	DrawSphere3D(m_pos, kSphereRadius, 10, 0xffffff, m_color, true);
 
 }
 
@@ -437,7 +413,6 @@ void FightBackObj::Hit()
 			m_isDeleteFlag = true;
 			m_isExtinction = true;
 		}
-		
 	}
 }
 

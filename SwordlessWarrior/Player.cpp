@@ -29,6 +29,7 @@ namespace
 
 Player::Player(int modelhandle) :
 	m_modelHandle(MV1DuplicateModel(modelhandle)),
+	m_anim_move(Loader::GetAnimationRun()),
 	m_radius(30),
 	m_Hp(50),
 	m_playerUpdate(&Player::NeutralUpdate)
@@ -86,7 +87,7 @@ void Player::SetCameraToPlayer(VECTOR cameraToPlayer)
 
 void Player::Hit()
 {
-	printfDx("PlayerIsHit");
+	/*printfDx("PlayerIsHit");*/
 	m_Hp -= 10;
 	m_isVisibleFlag = true;
 	m_isHitFlag=false;
@@ -234,177 +235,3 @@ void Player::HitUpdate()
 	
 	
 }
-
-
-/***************************************************************/
-
-//#include "Player.h"
-//#include"Physic.h"
-//#include<list>
-//#include <functional>
-//#include"NameTag.h"
-//#include"Pad.h"
-//#include"Vec2.h"
-//
-//#include<math.h>
-//
-
-//Player::Player(int modelhandle) :
-//	m_modelHandle(MV1DuplicateModel(modelhandle)),
-//	m_radius(kNetralRadius),
-//	m_playerUpdate(&Player::IdleUpdate),
-//	m_velocity(VGet(0.0f,0.0f,0.0f)),
-//	m_cameraAngle(0),
-//	m_Hp(50)
-//{
-//	MATRIX mtx = MGetRotY(-m_cameraAngle - DX_PI_F / 2);
-//	MATRIX scaleMtx = MGetScale(VGet(0.3f, 0.3f, 0.3f));//XYZそれぞれ1/5スケール
-//	mtx = MMult(mtx, scaleMtx);
-//	MV1SetMatrix(m_modelHandle, mtx);
-//	m_anim_nutral = Loader::GetAnimationIdle();
-//	m_attach_nutral=MV1AttachAnim(m_modelHandle,0,m_anim_nutral),
-//	m_anim_move = Loader::GetAnimationRun();
-//	m_anim_hit = Loader::GetAnimationHit();
-//	m_attach_move = MV1AttachAnim(m_modelHandle, 1, m_anim_move);
-//	m_attach_hit = MV1AttachAnim(m_modelHandle, 2, m_anim_hit);
-//}
-//
-//Player::~Player()
-//{
-//	//処理なし
-//}
-//
-//void Player::Init()
-//{
-//	//処理なし
-//}
-//
-//void Player::Update()
-//{
-//
-//	(this->*m_playerUpdate)();
-//	Pad::Update();
-//}
-//
-//void Player::Draw()
-//{
-//	MV1DrawModel(m_modelHandle);
-//	DrawSphere3D(m_pos,m_radius, 10, 0x000000, 0x00ffff, false);
-//	MakeShadowMap(50, 50);
-//}
-//
-//void Player::WantCameraToPlayer(VECTOR cameraToPlayer)
-//{
-//	m_cameraToPlayer = cameraToPlayer;
-//}
-//
-//VECTOR Player::GetCameraToPlayer() const
-//{
-//	return m_cameraToPlayer;
-//}
-//
-//void Player::Hit()
-//{
-//	printfDx("PlayerIsHit");
-//	m_Hp -= 10;
-//	ChangeAnim(m_attach_hit);
-//	m_playerUpdate = &Player::OnDamageUpdate;
-//}
-//
-//void Player::SetCameraAngle(float cameraAngle)
-//{
-//	m_cameraAngle = cameraAngle;
-//}
-//
-//void Player::StartUpdate()
-//{
-//}
-//
-//void Player::IdleUpdate()
-//{
-//	int m_inputX = 0;
-//	int m_inputY = 0;
-//	GetJoypadAnalogInput(&m_inputX, &m_inputY, DX_INPUT_PAD1);
-//	Vec2 stickInput((float)m_inputX, -(float)m_inputY);
-//	/*if (stickInput.Length() >= 1)
-//	{
-//		ChangeAnim(m_anim_move);
-//		m_playerUpdate = &Player::WalkingUpdate;
-//	}*/
-//
-//	//if (Pad::IsTrigger(PAD_INPUT_1))
-//	//{
-//	//	ChangeAnim(m_anim_jump);
-//	//	m_velocity.y += 50;
-//	//	m_playerUpdate = &Player::JumpingUpdate;
-//	//}
-//
-//
-//	MATRIX Mtx = MGetTranslate(VGet(1, 0, 0));
-//	MATRIX scaleMtx = MGetScale(VGet(0.3f, 0.3f, 0.3f));//XYZそれぞれ1/5スケール
-//	Mtx = MMult(Mtx, scaleMtx);
-//	m_playerRotateY = atan2((float)m_velocity.x, (float)m_velocity.z);
-//
-//	MATRIX rotateMtx = MGetRotAxis(m_velocity, m_playerRotateY);
-//	Mtx = MMult(Mtx, rotateMtx);
-//	
-//	MV1SetMatrix(m_modelHandle, Mtx);
-//	
-//	
-//	//MV1SetRotationXYZ(m_modelHandle, VGet(0, m_playerRotateY, 0));
-//
-//	
-//	CollisonSetRadius(m_radius);
-//	CollisionSetPos(m_pos);
-//
-//	UpdateAnim(m_attach_nutral);
-//}
-//
-//void Player::WalkingUpdate()
-//{
-//	UpdateAnim(m_attach_move);
-//
-//	int pad = GetJoypadInputState(DX_INPUT_KEY_PAD1);
-//	if (pad & PAD_INPUT_1)
-//	{
-//		//待機アニメーションを削除してやる必要がある
-//		//MV1DetachAnim(m_modelHandle, m_currentAnimNo);
-//		//m_isAttack = true;
-//		//m_currentAnimNo = MV1AttachAnim(m_modelHandle, kAttackAnimIndex, -1, false);
-//
-//		ChangeAnim(kAttackAnimIndex);
-//	}
-//	else
-
-//
-//}
-//
-//void Player::JumpingUpdate()
-//{
-//	m_velocity.y -= 5;
-//	MV1SetPosition(m_modelHandle, m_pos);
-//	if (m_pos.y < 0)
-//	{
-//		ChangeAnim(m_anim_nutral);
-//		m_pos.y = 0;
-//		m_playerUpdate = &Player::IdleUpdate;
-//	}
-//
-//	CollisionSetPos(m_pos);
-//	UpdateAnim(m_anim_jump);
-//}
-//
-//void Player::OnDamageUpdate()
-//{
-//	UpdateAnim(m_attach_hit);
-//}
-//
-//bool Player::UpdateAnim(int attachNo)
-//{
-//}
-//
-//void Player::ChangeAnim(int animIndex)
-//{
-//}
-//
-
