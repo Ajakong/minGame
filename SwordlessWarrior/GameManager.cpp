@@ -35,12 +35,8 @@ GameManager::GameManager():
 
 GameManager::~GameManager()
 {
-	pPhysic->Exit(pPlayer->GetTag());
-	pPhysic->Exit(pEnemy->GetTag());
-	for (auto& obj : pEnemy->GetAttackObj())
-	{
-		pPhysic->Exit(obj->GetTag());
-	}
+
+	pPhysic->Clear();
 }
 
 void GameManager::Init()

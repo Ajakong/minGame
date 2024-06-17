@@ -32,13 +32,15 @@ void Physic::Update()
 	CollisionManage();
 	m_collisionObjectList.clear();
 
-	for (const auto& item : data::object)
+	/*for (const auto& item : data::object)
 	{
+		
 		if (item.second->GetExtinctionFlag())
 		{
 			Exit(item.first);
+			
 		}
-	}
+	}*/
 }
 
 void Physic::Entry(std::shared_ptr<Object> obj,Tag name)
@@ -50,6 +52,11 @@ void Physic::Entry(std::shared_ptr<Object> obj,Tag name)
 void Physic::Exit(Tag name)
 {
 	data::object.erase(name);
+}
+
+void Physic::Clear()
+{
+	data::object.clear();
 }
 
 bool Physic::JudgeColision(std::shared_ptr<Object> obj1, std::shared_ptr<Object> obj2)

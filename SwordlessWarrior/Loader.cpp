@@ -110,12 +110,13 @@ namespace Loader
 	{
 		//3Danimationハンドル
 		MV1DeleteModel(anim_sitting);
-
+		anim_sitting = -1;
 		//Soundハンドル
 		DeleteSoundMem(BGM_Title);
-
+		BGM_Title = -1;
 		//2Dtextureハンドル
 		DeleteGraph(titleHandle);
+		titleHandle = -1;
 	}
 	void GameSceneLoad()
 	{
@@ -141,21 +142,30 @@ namespace Loader
 	{
 		//3Dmodelハンドル
 		MV1DeleteModel(enemyHandle);
+		enemyHandle = 1;
 		MV1DeleteModel(stageHandle);
+		stageHandle = -1;
 
 		//3Danimationハンドル
 		MV1DeleteModel(anim_run);
+		anim_run = -1;
 		MV1DeleteModel(anim_hit);
+		anim_hit = -1;
 		MV1DeleteModel(anim_idle);
+		anim_idle = -1;
 		MV1DeleteModel(anim_falling);
+		anim_falling = -1;
 		MV1DeleteModel(anim_jump);
+		anim_jump = -1;
 
 		//Soundハンドル
 		DeleteSoundMem(BGM_Battle);
+		BGM_Battle = -1;
 		DeleteSoundMem(BGM_Ending);
-
+		BGM_Ending = -1;
 		//2Dtexture
 		DeleteGraph(ui_EnemyHpbarHandle);
+		ui_EnemyHpbarHandle = -1;
 	}
 
 	void GameOverSceneLoad()
@@ -166,6 +176,7 @@ namespace Loader
 	void GameOverSceneDelete()
 	{
 		DeleteGraph(gameOverHandle);
+		gameOverHandle = -1;
 	}
 	
 	void Loader::Load()
@@ -180,9 +191,10 @@ namespace Loader
 	{
 		//3Dmodelハンドル
 		MV1DeleteModel(playerHandle);
-		
+		playerHandle = -1;
 		//3Danimationハンドル
 		MV1DeleteModel(skydomeHandle);
+		skydomeHandle = -1;
 	}
 
 }

@@ -34,7 +34,7 @@ void UI::DrawEnemyHp(int enemyHp,int playerHp)
 
 	DrawBox(400, 850, 400+playerHp*16, 870,0x00ff00,true);
 
-	DrawGraph(1400, 0, m_EnemyHpBarHandle, true);
+	//DrawGraph(1400, 0, m_EnemyHpBarHandle, true);
 }
 
 void UI::Draw(std::shared_ptr<Enemy>enemy)

@@ -104,8 +104,6 @@ void TitleScene::FadeInUpdate()
 
 	MV1SetAttachAnimTime(m_modelHandle, m_attach_move, m_playAnimTime);
 
-
-
 	if (m_frame <= 0)
 	{
 		m_updateFunc = &TitleScene::NormalUpdate;
@@ -136,8 +134,6 @@ void TitleScene::NormalUpdate()
 
 	MV1SetAttachAnimTime(m_modelHandle, m_attach_move, m_playAnimTime);
 		
-	
-
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
 
