@@ -96,7 +96,7 @@ void TitleScene::FadeInUpdate()
 	{
 		m_playAnimTime -= 0.7f;
 	}
-	if (m_playAnimTime > 565)m_playAnimTime = 0;
+	if (m_playAnimTime > 326)m_playAnimTime = 0;
 
 	m_skyDome->Update();
 
@@ -126,7 +126,7 @@ void TitleScene::NormalUpdate()
 	{
 		m_playAnimTime -= 0.7f;
 	}
-	if (m_playAnimTime > 565)m_playAnimTime = 0;
+	if (m_playAnimTime > 326)m_playAnimTime = 0;
 	
 	m_skyDome->Update();
 
@@ -160,7 +160,7 @@ void TitleScene::FadeOutUpdate()
 	{
 		m_playAnimTime -= 0.7f;
 	}
-	if (m_playAnimTime > 565)m_playAnimTime = 0;
+	if (m_playAnimTime > 326)m_playAnimTime = 0;
 
 	m_skyDome->Update();
 

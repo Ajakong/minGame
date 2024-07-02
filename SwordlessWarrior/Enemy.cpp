@@ -4,6 +4,24 @@
 namespace
 {
 	/// <summary>
+	/// 最大HP
+	/// </summary>
+	constexpr int kHp = 80;
+
+	constexpr int kStartPosX = 200;
+	constexpr int kStartPosY = 50;
+	constexpr int kStartPosZ = 0;
+
+	/// <summary>
+	/// 足元からモデルの中心までの距離
+	/// </summary>
+	constexpr int kFootToCenter = 30;
+
+	/// <summary>
+	/// 攻撃クールタイム中の最低移動速度
+	/// </summary>
+	constexpr int kIdleSpeed = 20;
+	/// <summary>
 	/// 球の当たり判定半径
 	/// </summary>
 	constexpr float kSphereRadius = 10.0f;
@@ -16,10 +34,15 @@ namespace
 	/// </summary>
 	constexpr int kBombCreateFrame = 70;
 
+	constexpr float kBombExplodeRadiusMax = 50.0f;
+
 	/// <summary>
 	/// 反撃オブジェクトの当たり判定の大きさ
 	/// </summary>
 	constexpr float kFightBackObjRadius = 10.0f;
+	constexpr int kFightBackObjNeutralSpeed = 1000;
+
+	constexpr float kFightBackObjAcceleration = 1.10f;
 
 	/// <summary>
 	/// 再攻撃までのクールタイム
@@ -35,8 +58,6 @@ namespace
 	/// ボムを生成する位置の高さ
 	/// </summary>
 	constexpr float kBombCreatePosY = 50.0f;
-
-
 }
 
 /*プロトタイプ宣言*/
@@ -49,7 +70,7 @@ Enemy::Enemy(int modelhandle, std::shared_ptr<Object> obj) :
 	m_modelHandle(MV1DuplicateModel(modelhandle)),
 	m_anim_nutral(Loader::GetAnimationFalling()),
 	m_enemyUpdate(&Enemy::StartUpdate),
-	m_Hp(80),
+	m_Hp(kHp),
 	m_radius(kSphereRadius),
 	m_attackCoolDownCount(0),
 	m_attackDir(VGet(1.0f, 0.0f, 0.0f)),
@@ -57,14 +78,11 @@ Enemy::Enemy(int modelhandle, std::shared_ptr<Object> obj) :
 	m_idleSpeed(1.0f)
 {
 	m_tag = Tag::Enemy;
-	m_pos = VGet(200, 50, 0);
+	m_pos = VGet(kStartPosX, kStartPosY, kStartPosZ);
 	MV1SetPosition(m_modelHandle, m_pos);
 	CollisonSetRadius(m_radius);
 	CollisionSetPos(m_pos);
-
-	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/5スケール
-
-	MV1SetMatrix(m_modelHandle, scaleMtx);
+	
 }
 
 Enemy::~Enemy()
@@ -76,10 +94,9 @@ Enemy::~Enemy()
 void Enemy::Init()
 {
 	//モデルのサイズ調整S
-	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/5スケール
-	//m_attackDir = norm(ToVec(m_pos, m_obj->GetPos()));//オブジェクトに向かうベクトルを正規化したもの
-
-	float Angle = -90 - atan2(m_attackDir.z, m_attackDir.x);
+	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/2スケール
+	
+	float Angle = -DX_PI_F/2 - atan2(m_attackDir.z, m_attackDir.x);//調整しやすいように90°回転させた角度を取得
 	m_centerToEnemyAngle += m_idleSpeed;
 
 	float Length = sqrt(m_pos.x * m_pos.x + m_pos.z * m_pos.z);
@@ -131,12 +148,15 @@ void Enemy::WantToPlayer(VECTOR cameraToPlayer)
 void Enemy::Hit()
 {
 	m_Hp -= 10;
+#if _DEBUG
 	//printfDx("EnemyIsHit");
+#endif
+	
 }
 
-void Enemy::HitFightBackObj()
+void Enemy::HitFightBackObj(int Damege=20)
 {
-	m_Hp -= 20;
+	m_Hp -= Damege;
 }
 
 void Enemy::SetCameraAngle(float cameraAngle)
@@ -150,7 +170,7 @@ void Enemy::SetAttackDir(VECTOR targetPos)
 
 VECTOR Enemy::GetMyPos()
 {
-	return VGet(m_pos.x, m_pos.y + 30, m_pos.z);
+	return VGet(m_pos.x, m_pos.y + kFootToCenter, m_pos.z);//モデルの中心の座標
 }
 
 void Enemy::StartUpdate()
@@ -158,10 +178,10 @@ void Enemy::StartUpdate()
 	m_velocity.y = -1;
 
 	//モデルのサイズ調整S
-	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/5スケール
+	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/2スケール
 	m_attackDir = norm(ToVec(m_pos, m_obj->GetPos()));//オブジェクトに向かうベクトルを正規化したもの
 
-	float Angle = -atan2(m_attackDir.z, m_attackDir.x);
+	float Angle = -DX_PI_F / 2 -atan2(m_attackDir.z, m_attackDir.x);
 
 	m_pos.y += m_velocity.y;
 
@@ -175,17 +195,17 @@ void Enemy::StartUpdate()
 	if (m_pos.y <= 0)
 	{
 		m_pos.y = 0;
-		m_enemyUpdate = &Enemy::AttackBombUpdate;
+		m_enemyUpdate = &Enemy::IdleUpdate;
 	}
 }
 
 void Enemy::IdleUpdate()
 {
 	//モデルのサイズ調整S
-	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/5スケール
+	MATRIX scaleMtx = MGetScale(VGet(0.5f, 0.5f, 0.5f));//XYZそれぞれ1/2スケール
 	
 	m_centerToEnemyAngle += m_idleSpeed;
-	float Angle = m_centerToEnemyAngle+DX_PI_F;
+	float Angle = -DX_PI_F / 2 - atan2(GetAttackDir().z, GetAttackDir().x);
 	float Length = sqrt(m_pos.x * m_pos.x + m_pos.z * m_pos.z);
 
 	m_pos.x = Length * static_cast<float>(cos(m_centerToEnemyAngle * DX_PI_F / 180.0));
@@ -203,15 +223,16 @@ void Enemy::IdleUpdate()
 	if (m_attackCoolDownCount > kAttackCoolDownTime)
 	{
 		int attackState = GetRand(1);
-		if (attackState == 0)
+		switch (attackState)
 		{
+		case 0:
 			m_attackCoolDownCount = 0;
 			m_enemyUpdate = &Enemy::AttackSphereUpdate;
-		}
-		else
-		{
-			m_attackCoolDownCount = 0;
-			m_enemyUpdate = &Enemy::AttackBombUpdate;
+		
+			/*m_attackCoolDownCount = 0;
+			m_enemyUpdate = &Enemy::AttackBombUpdate;*/
+		default:
+			break;
 		}
 	}
 }
@@ -224,6 +245,8 @@ void Enemy::OnDamageUpdate()
 void Enemy::AttackSphereUpdate()
 {
 	m_createFrameCount++;
+
+
 	if (m_createFrameCount > kSphereCreateFrame)
 	{
 		m_sphereNum++;
@@ -239,7 +262,7 @@ void Enemy::AttackSphereUpdate()
 			m_sphereNum = 0;
 			m_sphere.push_back(std::make_shared<FightBackObj>(shared_from_this(), GetMyPos(), m_attackDir, 1, 0x00ff00));
 
-			m_idleSpeed = static_cast<float>(GetRand(19) + 1);
+			m_idleSpeed = static_cast<float>(GetRand(kIdleSpeed) + 1);//攻撃後の移動速度
 			m_enemyUpdate = &Enemy::IdleUpdate;
 		}
 	}
@@ -256,10 +279,10 @@ void Enemy::AttackBombUpdate()
 			VGet(static_cast<float>(GetRand(kStageSizeHalf) - kStageSizeHalf), kBombCreatePosY, static_cast<float>(GetRand(kStageSizeHalf) - kStageSizeHalf)),
 			VGet(0, -1, 0), 1));
 	}
-	if (m_bombNum == 5)
+	if (m_bombNum == 1)
 	{
 		m_bombNum = 0;
-		m_idleSpeed = static_cast<float>(GetRand(19) + 1);
+		m_idleSpeed = static_cast<float>(GetRand(kIdleSpeed) + 1);
 		m_enemyUpdate = &Enemy::IdleUpdate;
 	}
 }
@@ -354,18 +377,15 @@ void EnemyAttackSphere::DeleteJudge()
 /*FightBackObject*/
 
 FightBackObj::FightBackObj(std::shared_ptr<Object>enemy, VECTOR pos, VECTOR velocity, int moveNum, int color) :EnemyAttackSphere(enemy, pos, velocity, moveNum, color),
-m_enemy(std::dynamic_pointer_cast<Enemy>(enemy)),
-m_radius(kFightBackObjRadius),
-m_velocity(velocity),
 m_isTransFlag(false),
-m_speed(1000)
+m_speed(kFightBackObjNeutralSpeed)
 {
 	m_tag = Tag::FightBackObj;
 	m_color = color;
 	CollisonSetRadius(m_radius);
 	m_moveUpdate = &FightBackObj::MoveUpdate;
 	m_velocity = VGet(m_velocity.x * 5, m_velocity.y * 5, m_velocity.z * 5);
-	VECTOR to = ToVec(m_pos, VAdd(m_pos, VGet(m_velocity.x * 10, m_velocity.y * 10, m_velocity.z * 10)));
+	VECTOR to = ToVec(m_pos, VAdd(m_pos, VGet(m_velocity.x * 10, m_velocity.y * 10, m_velocity.z * 10)));//進行方向に少し進んだ位置を回転の中心軸とする
 	m_centerAngle = atan2(to.z, to.x);
 }
 
@@ -426,10 +446,11 @@ void FightBackObj::MoveUpdate()
 
 void FightBackObj::FightBackUpdate()
 {
-	m_speed+=100;
-	m_velocity = norm(ToVec(m_pos, m_enemy->GetPos()));
-	//m_velocity = VGet(lerp(m_pos.x, m_enemy->GetPos().x, m_speed),0, lerp(m_pos.z, m_enemy->GetPos().z, m_speed));
-	m_velocity = VGet(m_velocity.x * m_speed, m_velocity.y  * m_speed, m_velocity.z  * m_speed);
+	
+	m_velocity = norm(ToVec(m_pos, m_enemy->GetPos()));//現在地からEnemyまでの方向ベクトルを取得
+
+	m_speed *= kFightBackObjAcceleration;//徐々にスピードを上げる
+	m_velocity = VGet(m_velocity.x * m_speed, m_velocity.y  * m_speed, m_velocity.z  * m_speed);//ToDo:イージングのライブラリを作って使うのが理想
 	
 	m_pos=VAdd(m_pos, m_velocity);
 }
@@ -438,7 +459,7 @@ void FightBackObj::TurnUpdate()
 {
 	m_turnFrame++;
 	
-	m_centerAngle += 10.0f;
+	m_centerAngle += 10.0f;//回転軸からの角度を大きくする
 	float Length = sqrt(m_pos.x * m_pos.x + m_pos.z * m_pos.z);
 
 	m_pos.x = Length * static_cast<float>(cos(m_centerAngle * DX_PI_F / 180.0));
@@ -474,6 +495,7 @@ EnemyAttackBomb::EnemyAttackBomb(std::shared_ptr<Object>enemy, VECTOR pos, VECTO
 {
 	m_moveUpdate = &EnemyAttackBomb::MoveUpdate;
 	m_tag = Tag::EnemyAttackBomb;
+	m_radius = 1;
 }
 
 EnemyAttackBomb::~EnemyAttackBomb()
@@ -486,8 +508,10 @@ void EnemyAttackBomb::Init()
 
 void EnemyAttackBomb::Update()
 {
-	(this->*m_moveUpdate)();
-	if (m_radius > 50.0f)
+	(this->*m_moveUpdate)();//状態関数の実行
+
+
+	if (m_radius > kBombExplodeRadiusMax)
 	{
 		m_isDeleteFlag = true;
 	}
@@ -510,7 +534,7 @@ void EnemyAttackBomb::Hit()
 
 void EnemyAttackBomb::MoveUpdate()
 {
-	VAdd(m_pos, m_velocity);
+	m_pos=VAdd(m_pos, m_velocity);
 }
 
 void EnemyAttackBomb::ExplosionUpdate()

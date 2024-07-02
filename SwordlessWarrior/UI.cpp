@@ -32,8 +32,15 @@ void UI::DrawEnemyHp(int enemyHp,int playerHp)
 
 	DrawBox(400, 850, 1200, 870, 0xff0000, true);
 
-	DrawBox(400, 850, 400+playerHp*16, 870,0x00ff00,true);
-
+	if (playerHp > 20)
+	{
+		DrawBox(400, 850, 400 + playerHp * 16, 870, 0x00ff00, true);//Player‚ÌHP•`‰æ
+	}
+	else
+	{
+		DrawBox(400, 850, 400 + playerHp * 16, 870, 0xffff00, true);//Player‚ÌHP•`‰æ
+	}
+	
 	//DrawGraph(1400, 0, m_EnemyHpBarHandle, true);
 }
 

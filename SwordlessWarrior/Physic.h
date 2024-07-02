@@ -4,6 +4,7 @@
 #include<iostream>
 #include<list>
 #include <functional>
+#include<unordered_map>
 
 
 using namespace std;
@@ -31,13 +32,14 @@ public:
 
 	
 private:
-	bool JudgeColision(std::shared_ptr<Object> ob1, std::shared_ptr<Object> obj2);
+	bool JudgeColision(std::shared_ptr<Object> obj1, std::shared_ptr<Object> obj2);
 
 
 	void CollisionManage();
 
 private:
 	std::list<CollisionObject> m_collisionObjectList;
+	//std::unordered_map<std::shared_ptr<Object>, CollisionObject> m_collisionObjectList;
 	int collisionLogNum;
 };
 

@@ -23,7 +23,9 @@ namespace
 	constexpr float kAnalogRangeMax = 0.8f;
 	constexpr float kAnalogInputMax = 1000.0f;//アナログスティックから入力されるベクトルの最大値
 
-	constexpr float frameParSecond = 60.0f;
+	constexpr float kFrameParSecond = 60.0f;
+
+	constexpr int kAvoidFrame = 60;
 }
 
 
@@ -76,8 +78,14 @@ void Player::Draw()
 	{
 		MV1DrawModel(m_modelHandle);
 	}
-	DrawSphere3D(m_pos,m_radius, 10, 0x000000, 0x00ffff, false);
+	
 	MakeShadowMap(50, 50);
+
+#if _DEBUG
+	DrawSphere3D(m_pos, m_radius, 10, 0x000000, 0x00ffff, false);
+	//printfDx("%d", HitCount);
+#endif
+	
 }
 
 void Player::SetCameraToPlayer(VECTOR cameraToPlayer)
@@ -87,8 +95,10 @@ void Player::SetCameraToPlayer(VECTOR cameraToPlayer)
 
 void Player::Hit()
 {
+	HitCount++;
+
 	/*printfDx("PlayerIsHit");*/
-	m_Hp -= 10;
+	m_Hp -= 5;
 	m_isVisibleFlag = true;
 	m_isHitFlag=false;
 	
@@ -113,7 +123,7 @@ bool Player::UpdateAnim(int attachNo)
 
 	//アニメーションを進行させる
 	float now = MV1GetAttachAnimTime(m_modelHandle, attachNo);//現在の再生カウント
-	now += kAnimFrameSpeed / frameParSecond;//アニメーションカウントを進める
+	now += kAnimFrameSpeed / kFrameParSecond;//アニメーションカウントを進める
 
 	//現在再生中のアニメーションの総カウントを取得する
 	float total = MV1GetAttachAnimTotalTime(m_modelHandle, attachNo);
@@ -154,10 +164,6 @@ void Player::ChangeAnim(int animIndex)
 }
 
 void Player::StartUpdate()
-{
-}
-
-void Player::IdleUpdate()
 {
 }
 
@@ -204,7 +210,6 @@ void Player::NeutralUpdate()
 
 	m_pos = VAdd(m_pos, m_velocity);
 
-	//move = VTransform(VGet(m_velocity.x+m_pos.x, m_velocity.y, m_velocity.z+m_pos.z), rotate);
 	MATRIX moveDir = MGetRotY((angle)+DX_PI_F / 2);
 	mtx = MMult(scale, moveDir);
 
@@ -214,6 +219,11 @@ void Player::NeutralUpdate()
 
 	MV1SetMatrix(m_modelHandle, mtx);
 
+	if (Pad::IsTrigger(PAD_INPUT_1))//XBoxのAボタン
+	{
+		m_radius = 0;
+		m_playerUpdate = &Player::AvoidUpdate;
+	}
 
 	m_velocity.x = 0;
 	m_velocity.y = 0;
@@ -234,4 +244,16 @@ void Player::HitUpdate()
 	m_playerUpdate = &Player::NeutralUpdate;
 	
 	
+}
+
+void Player::AvoidUpdate()
+{
+	actionFrame++;
+
+	if (actionFrame > kAvoidFrame)
+	{
+		actionFrame = 0;
+		m_radius = kNetralRadius;
+		m_playerUpdate = &Player::NeutralUpdate;
+	}
 }

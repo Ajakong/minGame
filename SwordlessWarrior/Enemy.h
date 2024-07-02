@@ -11,7 +11,7 @@ class EnemyAttackSphere;
 class FightBackObj;
 
 /// <summary>
-/// ReadMe:GameManager.cpp以外でincludeしない
+/// ReadMe:Enemy.cpp,GameManager.cpp以外でincludeしない
 /// </summary>
 class Enemy : public Object
 {
@@ -31,7 +31,7 @@ public:
 
 	void Hit();
 
-	void HitFightBackObj();
+	void HitFightBackObj(int Damege);
 
 	void SetCameraAngle(float cameraAngle);
 
@@ -147,18 +147,20 @@ protected:
 	int m_color = 0;
 	bool m_isDeleteFlag = 0;
 
-private:
-	void DeleteJudge();
-
-private:
 	float m_radius = 0;
 
 	VECTOR m_velocity;
 	std::shared_ptr<Enemy>m_enemy;
+
+private:
+	void DeleteJudge();
+
+private:
+	
 };
 
 /// <summary>
-/// Playerが取得でEnemyにダメージ
+/// Playerが取得後、周囲を周ったのちにEnemyに攻撃するオブジェクト
 /// </summary>
 class FightBackObj :public EnemyAttackSphere
 {
@@ -179,26 +181,32 @@ public:
 	MoveState_t m_moveUpdate;
 
 private:
+	/// <summary>
+	/// コンストラクタのVelocityの軌道で飛ぶ
+	/// </summary>
 	void MoveUpdate();
+	/// <summary>
+	/// Enemyに向かって飛んでいく
+	/// </summary>
 	void FightBackUpdate();
+	/// <summary>
+	/// 取得後、周囲を回転
+	/// </summary>
 	void TurnUpdate();
-private:
+protected:
 	int m_color = 0xff0000;
 
-	int m_turnFrame = 0;
-
-	float m_radius = 0;
+	
 
 	float m_centerAngle;
 
-
-	bool m_isTransFlag = false;
-
 	int m_speed=0;
 
-	VECTOR m_velocity;
+private:
+	bool m_isTransFlag = false;
 
-	std::shared_ptr<Enemy>m_enemy;
+	int m_turnFrame = 0;
+
 };
 
 class EnemyAttackBomb :public EnemyAttackSphere
@@ -222,10 +230,7 @@ private:
 	void ExplosionUpdate();
 
 private:
-	float m_radius = 0;
-
-	VECTOR m_velocity;
-	std::shared_ptr<Enemy>m_enemy;
+	
 
 };
 

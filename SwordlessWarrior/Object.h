@@ -24,7 +24,7 @@ public:
 	VECTOR GetPos()const { return m_pos; }
 
 	void CollisionSetPos(VECTOR pos);
-	void CollisonSetRadius(float radius);
+	void CollisonSetRadius(float& radius);
 
 	std::shared_ptr<SphereCollision> GetSphereCol() { return m_SphereCol; }
 

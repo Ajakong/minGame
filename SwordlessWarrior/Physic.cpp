@@ -1,14 +1,12 @@
 #include "Physic.h"
 #include"Object.h"
-#include<list>
-#include <functional>
-#include<unordered_map>
-#include"Object.h"
 
 namespace data
 {
 
 	std::unordered_map <Tag, std::shared_ptr<Object>> object;
+
+	std::list<CollisionObject> postCollisionObjectList;
 }
 
 void Physic::Update()
@@ -20,9 +18,8 @@ void Physic::Update()
 		for (const auto& obj2 : data::object)
 		{
 			if (obj1.first == obj2.first)continue;
-			
 
-			if(JudgeColision(obj1.second,obj2.second))
+			if (JudgeColision(obj1.second, obj2.second))
 			{
 				m_collisionObjectList.push_back({ obj1.second,obj2.second });
 			}
@@ -30,17 +27,9 @@ void Physic::Update()
 	}
 
 	CollisionManage();
+	data::postCollisionObjectList = m_collisionObjectList;
 	m_collisionObjectList.clear();
 
-	/*for (const auto& item : data::object)
-	{
-		
-		if (item.second->GetExtinctionFlag())
-		{
-			Exit(item.first);
-			
-		}
-	}*/
 }
 
 void Physic::Entry(std::shared_ptr<Object> obj,Tag name)
@@ -75,15 +64,24 @@ bool Physic::JudgeColision(std::shared_ptr<Object> obj1, std::shared_ptr<Object>
 
 void Physic::CollisionManage()
 {
+	auto iterator = data::postCollisionObjectList.begin();
 	for (const auto& item : m_collisionObjectList)
 	{
+		if (data::postCollisionObjectList.size() != 0)//1フレーム前の当たったオブジェクトが同じ場合衝突関数を呼ばない
+		{
+			if (iterator != data::postCollisionObjectList.end() && iterator->objB == item.objB)continue;
+
+		}
 		if (item.objA->GetTag() == Tag::Player && item.objB->GetTag() == Tag::FightBackObj)item.objB->Hit();
 		else if (item.objA->GetTag() == Tag::FightBackObj && item.objB->GetTag() == Tag::Player)item.objA->Hit();
 		else
 		{
 			item.objA->Hit();
 			item.objB->Hit();
+
 		}
+
+		if(iterator!=data::postCollisionObjectList.end())iterator ++ ;
 	}
 }
 

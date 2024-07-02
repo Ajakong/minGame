@@ -17,7 +17,7 @@ void Object::CollisionSetPos(VECTOR pos)
 	 m_SphereCol->SetPos(pos); 
 }
 
-void Object::CollisonSetRadius(float radius)
+void Object::CollisonSetRadius(float& radius)
 {
 	 m_SphereCol->SetRadius(radius); 
 }

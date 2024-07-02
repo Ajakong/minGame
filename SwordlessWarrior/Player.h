@@ -36,12 +36,25 @@ private:
 	void ChangeAnim(int animIndex);
 
 	//状態別関数(ポインタで呼び出す)
+	
+	/// <summary>
+	/// 開始直後に呼ばれる
+	/// </summary>
 	void StartUpdate();
-	void IdleUpdate();
+	/// <summary>
+	/// 通常時
+	/// </summary>
 	void NeutralUpdate();
 	void WalkingUpdate();
 	void JumpingUpdate();
+	/// <summary>
+	/// 衝突関数
+	/// </summary>
 	void HitUpdate();
+	/// <summary>
+	/// 回避
+	/// </summary>
+	void AvoidUpdate();
 
 	VECTOR GetCameraToPlayer()const;
 
@@ -50,6 +63,11 @@ private:
 	int m_modelHandle = 0;
 
 	int rotRad = 0;
+
+	/// <summary>
+	/// 行動のフレームを管理する
+	/// </summary>
+	int actionFrame = 0;
 
 	float m_radius = 0;
 
@@ -80,5 +98,7 @@ private:
 
 	bool m_isVisibleFlag = false;
 	int m_visibleCount = 0;
+
+	int HitCount = 0;
 };
 

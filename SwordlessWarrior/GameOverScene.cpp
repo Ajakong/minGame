@@ -78,7 +78,6 @@ void GameOverScene::FadeOutUpdate()
 	if (60 <= m_frame)
 	{
 
-
 		if (m_selectNumber % 2 == 0)
 		{
 			Loader::GameSceneLoad();
