@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include"Vec3.h"
 
 class SceneMain;
 
@@ -58,7 +59,8 @@ private:
     UpdateFunc_t m_updateFunc = nullptr;
     DrawFunc_t m_drawFunc = nullptr;
 
-
+    Vec3 pos;
+    float angle;
 private:
    
     // çXêVä÷êî

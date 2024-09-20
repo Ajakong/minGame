@@ -10,6 +10,7 @@
 #include"GamePlayingScene.h"
 #include"Game.h"
 #include"Pad.h"
+#include"Quaternion.h"
 
 #include"Loader.h"
 
@@ -31,6 +32,7 @@ TitleScene::TitleScene(SceneManager& manager) :
 	m_shadow(std::make_shared<Shadow>()),
 	m_frame(60)
 {
+	SetCameraPositionAndTargetAndUpVec(VGet(0, 0, -500), VGet(0, 0, 0), VGet(0, 1, 0));
 	PlaySoundMem(m_stageBgm, DX_PLAYTYPE_LOOP);
 	m_updateFunc = &TitleScene::FadeInUpdate;
 	m_drawFunc = &TitleScene::FadeDraw;
@@ -43,6 +45,8 @@ TitleScene::TitleScene(SceneManager& manager) :
 	SetFogColor(200, 120, 0);			// フォグの色にする
 	SetFogStartEnd(10.0f, 4000.0f);	// フォグの開始距離
 	m_shadow->SetLight();
+	pos = Vec3(0, 1, 0);
+	angle = 0;
 }
 
 TitleScene::~TitleScene()
@@ -100,7 +104,7 @@ void TitleScene::FadeInUpdate()
 
 	m_skyDome->Update();
 
-	MV1SetPosition(m_modelHandle, VGet(800, 400, -650));
+	MV1SetPosition(m_modelHandle, VGet(0, 0, 0));
 
 	MV1SetAttachAnimTime(m_modelHandle, m_attach_move, m_playAnimTime);
 
@@ -130,10 +134,23 @@ void TitleScene::NormalUpdate()
 	
 	m_skyDome->Update();
 
-	MV1SetPosition(m_modelHandle, VGet(800,400,-650));
-
 	MV1SetAttachAnimTime(m_modelHandle, m_attach_move, m_playAnimTime);
-		
+
+	Vec3 zero = { 0,0,0 };
+
+	Vec3 offSetVec = GetCameraRightVector();
+	offSetVec -= GetCameraUpVector();
+	offSetVec *= 9;
+	Quaternion myQ;
+	angle += 0.05f;
+
+	Vec3 front = GetCameraFrontVector();
+	myQ.RotationQuaternion(angle, Vec3(0, 0, 1));
+	MATRIX mat = myQ.ToMat();
+	/*MATRIX mat = MMult(mat, MGetScale(VGet(2, 2, 2)));
+	*/mat = MMult(mat, MGetTranslate(VGet(0, angle, 0)));
+	MV1SetMatrix(m_modelHandle, mat);
+
 	if (Pad::IsTrigger(PAD_INPUT_1))
 	{
 
